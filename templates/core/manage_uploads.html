@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+    <h1 class="text-center my-4">Manage Your Uploads</h1>
+    <form method="post" enctype="multipart/form-data" class="row g-3">
+        {% csrf_token %}
+        <div class="col-12">
+            <label for="file" class="form-label">Upload a File</label>
+            <input type="file" name="file" id="file" class="form-control">
+        </div>
+        <div class="col-12">
+            <button type="submit" class="btn btn-primary w-100">Upload</button>
+        </div>
+    </form>
+
+    <h2 class="mt-4">Your Uploaded Files</h2>
+    <ul class="list-group">
+        {% for file in files %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <a href="{{ file.file.url }}" target="_blank">{{ file.file.name }}</a>
+                <span class="badge bg-secondary">{{ file.get_status_display }}</span>
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

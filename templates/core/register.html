@@ -1,0 +1,58 @@
+{% extends 'base.html'%}
+{% block content %}
+<div class="container">
+    <div class="form-card">
+
+    <h2 class="text-center my-4">Register</h2>
+    <form method="post" class="row g-3">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div class="col-12">
+            <button type="submit" class="btn btn-primary w-100">Register</button>
+        </div>
+    </form>
+</div>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const passwordInput = document.querySelector("#id_password1");
+        const passwordHintList = passwordInput.closest("p").nextElementSibling;
+    
+        if (!passwordHintList || passwordHintList.tagName !== "UL") {
+            console.error("Password hints list not found. Ensure the structure of the form matches the script.");
+            return;
+        }
+    
+        const passwordHints = passwordHintList.querySelectorAll("li");
+    
+        // Function to validate password and update hint styles
+        function validatePassword(password) {
+            const checks = [
+                /.{8,}/, // At least 8 characters
+                /[!@#$%^&*(),.?":{}|<>]/, // Special character
+                /\d/, // Numeric digit
+                /[A-Z]/, // Uppercase letter
+                /[a-z]/, // Lowercase letter
+            ];
+    
+            passwordHints.forEach((hint, index) => {
+                if (checks[index] && checks[index].test(password)) {
+                    hint.classList.add("text-success");
+                    hint.classList.remove("text-danger");
+                } else {
+                    hint.classList.add("text-danger");
+                    hint.classList.remove("text-success");
+                }
+            });
+        }
+    
+        // Listen for input on the password field
+        passwordInput.addEventListener("input", function () {
+            const password = passwordInput.value;
+            validatePassword(password);
+        });
+    });
+        
+</script>
+
+{% endblock %}
