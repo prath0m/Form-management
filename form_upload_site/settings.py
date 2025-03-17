@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-1jj4$9=jg6w$xct*!^m)eukqxq992mqs657jybtbx+l_6fbp1t
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'core',
     'crispy_forms',
+    'storages',
 ]
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
@@ -131,5 +132,20 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
-
+STATIC_ROOT = '/var/log/static/'
 LOGIN_URL = '/login/'
+
+
+GS_PROJECT_ID = 'dfsp-prototype'
+GS_BUCKET_NAME = 'dfsp_testcase_01'
+#MEDIA_URL = f'https://storage.googleapis.com/{GS_BUCKET_NAME}/'
+DEFAULT_FILE_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 465
+EMAIL_USE_SSL = True
+EMAIL_HOST_USER = 'kkaisertest1@gmail.com'
+EMAIL_HOST_PASSWORD = 'pash lozh kkwv ugnm'
+DEFAULT_FROM_EMAIL = 'kkaisertest1@gmail.com'

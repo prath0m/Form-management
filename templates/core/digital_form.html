@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container my-5">
+    <h1 class="text-center mb-4">Form Submissions</h1>
+    
+    <div class="row d-flex flex-row mb-3 g-3 align-items-end">
+        <div class="col">
+            <label for="filterFormType" class="form-label">Form Type</label>
+            <input type="text" class="form-control" id="filterFormType" placeholder="Enter form type">
+        </div>
+        <div class="col">
+            <label for="filterStartDate" class="form-label">Start Date</label>
+            <input type="date" class="form-control" id="filterStartDate">
+        </div>
+        <div class="col">
+            <label for="filterEndDate" class="form-label">End Date</label>
+            <input type="date" class="form-control" id="filterEndDate">
+        </div>
+        <div class="col d-grid">
+            <button class="btn btn-secondary" id="applyFilters">Apply Filters</button>
+        </div>
+    </div>
+    
+    <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
+        <table class="table table-hover table-striped align-middle" style="border-collapse: separate; border-spacing: 0; background: transparent;">
+            <thead class="table-secondary" style="position: sticky; top: 0; z-index: 1;">
+                <tr>
+                    <th>User</th>
+                    <th>Form Type</th>
+                    <th>File Name</th>
+                    <th>Submitted At</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="submissionTableBody">
+		    {% if submissions %}
+                {% for submission in submissions %}
+                <tr>
+                    <td>{{ submission.user.username }}</td>
+                    <td>{{ submission.form_type }}</td>
+                    <td>{{ submission.submitted_file|cut:".json" }}</td>
+                    <td>{{ submission.submitted_at|date:"Y-m-d H:i:s" }}</td>
+                    <td>
+                        <!-- Button to trigger modal -->
+                        <button class="btn btn-sm btn-primary view-json-btn" data-id="{{ submission.id }}">
+                            View File
+                        </button>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center">No submissions found.</td>
+                </tr>
+                {% endfor %}
+		{% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal fade" id="jsonModal" tabindex="-1" aria-labelledby="jsonModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="jsonModalLabel">File Content</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <pre id="jsonModalContent" style="max-height:400px; overflow:auto;"></pre>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Filter functionality (same as before)
+document.addEventListener('DOMContentLoaded', function(){
+    document.getElementById('applyFilters').addEventListener('click', function(){
+        let filterType = document.getElementById('filterFormType').value.toLowerCase();
+        let filterStart = document.getElementById('filterStartDate').value;
+        let filterEnd = document.getElementById('filterEndDate').value;
+
+        document.querySelectorAll('#submissionTableBody tr').forEach(row => {
+            let formType = row.cells[1].innerText.toLowerCase();
+            let submittedAt = row.cells[3].innerText;
+            let dateValue = new Date(submittedAt);
+            let showRow = true;
+            if(filterType && !formType.includes(filterType)) {
+                showRow = false;
+            }
+            if(filterStart && dateValue < new Date(filterStart)) {
+                showRow = false;
+            }
+            if(filterEnd && dateValue > new Date(filterEnd)) {
+                showRow = false;
+            }
+            row.style.display = showRow ? '' : 'none';
+        });
+    });
+
+    document.querySelectorAll('.view-json-btn').forEach(button => {
+        button.addEventListener('click', function(){
+            const submissionId = this.getAttribute('data-id');
+            fetch("{% url 'get_submission' 0 %}".replace("0", submissionId))
+                .then(response => response.json())
+                .then(data => {
+                    if(data.status === 'success'){
+                        document.getElementById('jsonModalContent').textContent = data.content;
+                        var modal = new bootstrap.Modal(document.getElementById('jsonModal'));
+                        modal.show();
+                    } else {
+                        alert("Error loading JSON: " + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    alert("An error occurred while fetching the JSON content.");
+                });
+
+        });
+    });
+});
+</script>
+{% endblock %}

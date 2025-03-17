@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %} 
+
+    <title>DFSP Multi-Step Form</title>
+    <link rel="stylesheet" href="{% static 'css/form.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+
+    <div id="savedFormsContainer" class="container">
+        <h3>Your Saved Forms</h3>
+        <div class="form-list">
+            {% for form in saved_forms %}
+                <div class="form-item">
+                    <a href="{% url 'form' %}?file_path={{ form.file_path }}" class="form-link">
+                        <div class="form-item-content">
+                            <span class="form-title" data-filename="{{ form.filename }}"></span>
+                        </div>
+                    </a>
+                </div>
+            {% empty %}
+                <p class="no-saved-forms">No saved forms found.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const formTitles = document.querySelectorAll(".form-title");
+        
+            formTitles.forEach((title) => {
+                const rawFilename = title.getAttribute("data-filename");
+                const processedText = processFilename(rawFilename);
+                title.textContent = processedText;
+            });
+        
+            function processFilename(filename) {
+                const parts = filename.split("_");
+                const timestamp = parts[parts.length -3];
+                const time = parts[parts.length -2]; 
+                const formType = parts[parts.length -1].split(".")[0];
+        
+                const year = timestamp.slice(0, 4); 
+                const month = timestamp.slice(4, 6);
+                const day = timestamp.slice(6, 8);
+                const hour = time.slice(0, 2); 
+                const minute = time.slice(2, 4); 
+                const date = new Date(year, month - 1, day, hour, minute);
+        
+                const options = {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                };
+                const formattedDate = date.toLocaleString("en-US", options);
+                return `${formattedDate} - ${formType}`;
+            }
+        });
+    </script>
+
+
+        
+{% endblock %}

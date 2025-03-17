@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+#textButton {
+    background: none;
+    border: none;
+}
+
+/* Custom styles for better appearance */
+.table-responsive {
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(0, 123, 255, 0.05); 
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(0, 0, 0, 0.02); 
+}
+
+.table thead th {
+    font-weight: 600; 
+    background-color: #f8f9fa; 
+    border-bottom: 2px solid #dee2e6; 
+}
+
+.table td, .table th {
+    padding: 12px; 
+}
+
+.badge {
+    font-size: 0.9em; 
+    padding: 0.5em 0.75em; 
+}
+
+.btn-sm {
+    padding: 0.25rem 0.5rem; 
+    font-size: 0.875rem; 
+}
+
+.table-responsive::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.table-responsive::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+</style>
+
+<div class="container my-5">
+    <h1 class="text-center mb-4">Admin Dashboard</h1>
+    <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
+        <table class="table table-hover table-striped align-middle" style="border-collapse: separate; border-spacing: 0; background: transparent;">
+            <thead class="table-secondary" style="position: sticky; top: 0; z-index: 1;">
+                <tr>
+                    <th>Location</th>
+                    <th>Dates of Visit</th>
+                    <th>Areas of Interest</th>
+                    <th>Processed Time</th>
+                    <th>Uploaded Time</th>
+                    <th>Status</th>
+                    <th>File</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if datasets %}
+                    {% for all_data in datasets %}
+
+		    {% with data=all_data.row %}
+
+                        <tr>
+                            {% comment %} <td>{{ data.row.location }}</td> {% endcomment %}
+                            <td>{{ data.location }}</td>
+                            <td>{{ data.dates_of_visit }}</td>
+                            <td>
+                                <ul class="list-unstyled mb-0">
+                                    {% for item in data.areas_of_interest %}
+                                        <li>{{ item }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </td>
+                            <td>{{ data.processed_time }}</td>
+                            <td>{{ data.uploaded_time }}</td>
+                            <td>
+                                {% comment %} {% if data.form.process_status == 'Processed' %} {% endcomment %}
+                                {% if data.process_status == 'Processed' %}
+                                    <span class="badge bg-success">Processed</span>
+                                {% else %}
+                                    <span class="badge bg-warning">{{ data.process_status }}</span>
+                                {% endif %}
+                            </td>
+                            {% load static %}
+                            <td>
+                                    <a href="{{ all_data.file_url}}" target="_blank" class="text-decoration-none">
+                                        <i class="fas fa-file-download"></i> {{ all_data.file_name}} 
+                                    </a>
+                            </td>
+                        </tr>
+
+		{% endwith %}
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="8" class="text-center text-muted py-4">No forms uploaded yet.</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

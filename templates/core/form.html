@@ -1,0 +1,3629 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %} 
+
+    <title>DFSP Multi-Step Form</title>
+    <link rel="stylesheet" href="{% static 'css/form.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    
+    <div class="container">
+        <h2>DFSP Intelligence Portal</h2>
+        <h1>DFSP Submission Form</h1>
+
+        <div class="step-indicator">
+            <div class="step active">1</div>
+            <div class="step">2</div>
+        </div>
+
+        <form id="dfspForm" onsubmit="confirmSubmit(event)" method="POST" action="{% url 'store_data' %}">
+            {% csrf_token %}
+            <input type="hidden" id="saved_file_path" name="saved_file_path" value="">
+            <div class="form-step active" id="step1">
+                
+                <div class="question">
+                    <label for="dodaac"><span style="color: red;">*</span>DODAAC:</label>
+                    <input type="text" id="dodaac" name="dodaac" placeholder="Enter DODAAC"
+                           onchange="populateFields('dodaac')" onkeydown="moveToNextField(event, 'dfspName')" required />
+                    <span id="dodaac-error" class="error-message"></span>
+                </div>
+        
+                <!-- DFSP Name -->
+                <div class="question">
+                    <label for="dfspName"><span style="color: red;">*</span>DFSP Name:</label>
+                    <input type="text" id="dfspName" name="dfspName" placeholder="Enter DFSP Name"
+                           onchange="populateFields('dfspName')" onkeydown="moveToNextField(event, 'dfspType')" required />
+                    <span id="dfspName-error" class="error-message"></span>
+                </div>
+        
+                <div class="question">
+                    <label for="dfspType"><span style="color: red;">*</span>DFSP Type:</label>
+                    <select id="dfspType" name="dfspType" onchange="populateFields('dfspType')" required>
+                        <option value="" disabled selected>Select DFSP Type</option>
+                        <option value="COCO">Contractor Owned/Contractor Operated (COCO)</option>
+                        <option value="GOCO">Service Funded/Service Contracted (GOCO)</option>
+                        <option value="GOCO">DLA Funded/Service Contracted (GOCO)</option>
+                        <option value="GOCO">DLA Funded/DLA Contracted (GOCO)</option>
+                        <option value="GOGO">Service Funded/Service Operated (GOGO)</option>
+                        <option value="GOGO">DLA Funded/Service Operated (GOGO)</option>
+                        <option value="GOGO">DLA Funded/DLA Operated (GOGO)</option>
+                    </select>
+                    <span id="dfspType-error" class="error-message"></span>
+                </div>
+
+                <!-- Add all remaining questions dynamically -->
+                <div class="question">
+                    <label for="militaryService">DFSP Military Service Affiliated:</label>
+                    <input type="text" id="militaryService" name="militaryService" readonly />
+                </div>
+
+                <div class="question">
+                    <label for="dfspFunction">DFSP Function:</label>
+                    <input type="text" id="dfspFunction" name="dfspFunction" readonly />
+                </div>
+
+                <div class="question">
+                    <label for="state">State:</label>
+                    <input type="text" id="state" name="state" readonly />
+                </div>
+
+                <div class="question">
+                    <label for="country">Country:</label>
+                    <input type="text" id="country" name="country" readonly />
+                </div>
+
+                <!-- DFSP Regional Affiliation -->
+                <div class="question">
+                    <label for="regionalAffiliation">DFSP Regional Affiliation:</label>
+                    <input type="text" id="regionalAffiliation" name="regionalAffiliation" readonly />
+                </div>
+
+                <!-- DLA Energy or Military Service Contract -->
+                <div class="question">
+                    <label for="energyContract">DLA Energy or Military Service Contract:</label>
+                    <input type="text" id="energyContract" name="energyContract" readonly />
+                </div>
+
+                <!-- DFSP Funding Qualifier -->
+                <div class="question">
+                    <label for="fundingQualifier">DFSP Funding Qualifier:</label>
+                    <input type="text" id="fundingQualifier" name="fundingQualifier" readonly />
+                </div>
+
+                <!-- DFSP Status -->
+                <div class="question">
+                    <label for="dfspStatus">DFSP Status:</label>
+                    <input type="text" id="dfspStatus" name="dfspStatus" readonly />
+                </div>
+
+                <!-- DSO Host/Tenant -->
+                <div class="question">
+                    <label for="dsoHostTenant">DSO Host/Tenant:</label>
+                    <input type="text" id="dsoHostTenant" name="dsoHostTenant" readonly />
+                </div>
+
+                <!-- DSO MOA/PBA -->
+                <div class="question">
+                    <label for="dsoMOAPBA">DSO MOA/PBA:</label>
+                    <input type="text" id="dsoMOAPBA" name="dsoMOAPBA" readonly />
+                </div>
+
+                <!-- DSO ISSA -->
+                <div class="question">
+                    <label for="dsoISSA">DSO ISSA:</label>
+                    <input type="text" id="dsoISSA" name="dsoISSA" readonly />
+                </div>
+
+                <!-- FSD Host/Tenant -->
+                <div class="question">
+                    <label for="fsdHostTenant">FSD Host/Tenant:</label>
+                    <input type="text" id="fsdHostTenant" name="fsdHostTenant" readonly />
+                </div>
+
+                <!-- FSD MOA -->
+                <div class="question">
+                    <label for="fsdMOA">FSD MOA:</label>
+                    <input type="text" id="fsdMOA" name="fsdMOA" readonly />
+                </div>
+
+                <!-- FSD ISSA -->
+                <div class="question">
+                    <label for="fsdISSA">FSD ISSA:</label>
+                    <input type="text" id="fsdISSA" name="fsdISSA" readonly />
+                </div>
+
+                <!-- FSD Permitted -->
+                <div class="question">
+                    <label for="fsdPermitted">FSD Permitted:</label>
+                    <input type="text" id="fsdPermitted" name="fsdPermitted" readonly />
+                </div>
+
+                <!-- Manpower Military -->
+                <div class="question">
+                    <label for="manpowerMilitary">Manpower Military:</label>
+                    <input type="text" id="manpowerMilitary" name="manpowerMilitary" readonly />
+                </div>
+
+                <!-- Manpower Federal Employees -->
+                <div class="question">
+                    <label for="manpowerFederalEmployees">Manpower Federal Employees:</label>
+                    <input type="text" id="manpowerFederalEmployees" name="manpowerFederalEmployees" readonly />
+                </div>
+
+                <!-- Manpower Host Nation -->
+                <div class="question">
+                    <label for="manpowerHostNation">Manpower Host Nation:</label>
+                    <input type="text" id="manpowerHostNation" name="manpowerHostNation" readonly />
+                </div>
+
+                <!-- Manpower Contract Support -->
+                <div class="question">
+                    <label for="manpowerContractSupport">Manpower Contract Support:</label>
+                    <input type="text" id="manpowerContractSupport" name="manpowerContractSupport" readonly />
+                </div>
+
+                <!-- Equipment -->
+                <div class="question">
+                    <label for="equipment">Equipment:</label>
+                    <input type="text" id="equipment" name="equipment" readonly />
+                </div>
+
+                <!-- Training -->
+                <div class="question">
+                    <label for="training">Training:</label>
+                    <input type="text" id="training" name="training" readonly />
+                </div>
+
+                <!-- Compliance -->
+                <div class="question">
+                    <label for="compliance">Compliance:</label>
+                    <input type="text" id="compliance" name="compliance" readonly />
+                </div>
+
+                <!-- Restoration -->
+                <div class="question">
+                    <label for="restoration">Restoration:</label>
+                    <input type="text" id="restoration" name="restoration" readonly />
+                </div>
+
+                <!-- Operator Level -->
+                <div class="question">
+                    <label for="operatorLevel">Operator Level:</label>
+                    <input type="text" id="operatorLevel" name="operatorLevel" readonly />
+                </div>
+
+                <!-- Systems Level -->
+                <div class="question">
+                    <label for="systemsLevel">Systems Level:</label>
+                    <input type="text" id="systemsLevel" name="systemsLevel" readonly />
+                </div>
+
+                <!-- Labs -->
+                <div class="question">
+                    <label for="labs">Labs:</label>
+                    <input type="text" id="labs" name="labs" readonly />
+                </div>
+
+                <!-- Area Lab -->
+                <div class="question">
+                    <label for="areaLab">Area Lab:</label>
+                    <input type="text" id="areaLab" name="areaLab" readonly />
+                </div>
+
+                <!-- Systems DLA-Owned -->
+                <div class="question">
+                    <label for="systemsDLAOwned">Systems DLA-Owned:</label>
+                    <input type="text" id="systemsDLAOwned" name="systemsDLAOwned" readonly />
+                </div>
+
+                <!-- Systems Service-Owned -->
+                <div class="question">
+                    <label for="systemsServiceOwned">Systems Service-Owned:</label>
+                    <input type="text" id="systemsServiceOwned" name="systemsServiceOwned" readonly />
+                </div>
+
+                <!-- Maintenance Requirements -->
+                <div class="question">
+                    <label for="maintenanceRequirements">Maintenance Requirements:</label>
+                    <input type="text" id="maintenanceRequirements" name="maintenanceRequirements" readonly />
+                </div>
+
+                <!-- Real Property -->
+                <div class="question">
+                    <label for="realProperty">Real Property:</label>
+                    <input type="text" id="realProperty" name="realProperty" readonly />
+                </div>
+
+                <!-- Inventory -->
+                <div class="question">
+                    <label for="inventory">Inventory:</label>
+                    <input type="text" id="inventory" name="inventory" readonly />
+                </div>
+
+                <!-- Quality Surveillance -->
+                <div class="question">
+                    <label for="qualitySurveillance">Quality Surveillance:</label>
+                    <input type="text" id="qualitySurveillance" name="qualitySurveillance" readonly />
+                </div>
+
+                <!-- Fuel Spills -->
+                <div class="question">
+                    <label for="fuelSpills">Fuel Spills:</label>
+                    <input type="text" id="fuelSpills" name="fuelSpills" readonly />
+                </div>
+
+                <!-- Safety Concerns -->
+                <div class="question">
+                    <label for="safetyConcerns">Safety Concerns:</label>
+                    <input type="text" id="safetyConcerns" name="safetyConcerns" readonly />
+                </div>
+
+                <!-- File Plans -->
+                <div class="question">
+                    <label for="filePlans">File Plans:</label>
+                    <input type="text" id="filePlans" name="filePlans" readonly />
+                </div>
+
+                <!-- Document Digitization -->
+                <div class="question">
+                    <label for="documentDigitization">Document Digitization:</label>
+                    <input type="text" id="documentDigitization" name="documentDigitization" readonly />
+                </div>
+
+                <!-- FEN Master Site Visit Reports -->
+                <div class="question">
+                    <label for="fenSiteReports">FEN Master Site Visit Reports:</label>
+                    <input type="text" id="fenSiteReports" name="fenSiteReports" readonly />
+                </div>
+
+                <!-- Quality Master Site Visit Reports -->
+                <div class="question">
+                    <label for="qualitySiteReports">Quality Master Site Visit Reports:</label>
+                    <input type="text" id="qualitySiteReports" name="qualitySiteReports" readonly />
+                </div>
+
+                <!-- FSD Master Site Visit Reports -->
+                <div class="question">
+                    <label for="fsdSiteReports">FSD Master Site Visit Reports:</label>
+                    <input type="text" id="fsdSiteReports" name="fsdSiteReports" readonly />
+                </div>
+
+                <!-- Audit Master Site Visit Reports -->
+                <div class="question">
+                    <label for="auditSiteReports">Audit Master Site Visit Reports:</label>
+                    <input type="text" id="auditSiteReports" name="auditSiteReports" readonly />
+                </div>
+
+                <!-- BPSD Master Site Visit Reports -->
+                <div class="question">
+                    <label for="bpsdSiteReports">BPSD Master Site Visit Reports:</label>
+                    <input type="text" id="bpsdSiteReports" name="bpsdSiteReports" readonly />
+                </div>
+
+                <!-- DLA J6 Master Site Visit Reports -->
+                <div class="question">
+                    <label for="dlaJ6SiteReports">DLA J6 Master Site Visit Reports:</label>
+                    <input type="text" id="dlaJ6SiteReports" name="dlaJ6SiteReports" readonly />
+                </div>
+
+                <!-- DCO Master Site Visit Reports -->
+                <div class="question">
+                    <label for="dcoSiteReports">DCO Master Site Visit Reports:</label>
+                    <input type="text" id="dcoSiteReports" name="dcoSiteReports" readonly />
+                </div>
+
+                <!-- Regional Master Site Visit Reports -->
+                <div class="question">
+                    <label for="regionalSiteReports">Regional Master Site Visit Reports:</label>
+                    <input type="text" id="regionalSiteReports" name="regionalSiteReports" readonly />
+                </div>
+
+                <!-- Energy POC Matrix -->
+                <div class="question">
+                    <label for="energyPOCMatrix">Energy POC Matrix:</label>
+                    <input type="text" id="energyPOCMatrix" name="energyPOCMatrix" readonly />
+                </div>
+
+                <!-- DFSP POC Matrix -->
+                <div class="question">
+                    <label for="dfspPOCMatrix">DFSP POC Matrix:</label>
+                    <input type="text" id="dfspPOCMatrix" name="dfspPOCMatrix" readonly />
+                </div>
+
+                <div class="button-group">
+                    <button type="button" class="button" onclick="nextStep()">
+                        Next
+                    </button>
+                </div>
+            </div>
+
+            <div class="form-step" id="step2">
+                <div class="question">
+                    <label for="formType">Select Form Type:</label>
+                    <select id="formType" name="FormType" onchange="showSpecificQuestions()" required>
+                        <option value="" disabled selected>Select Form Type</option>
+                        <option value="2054" {% if form_data.FormType == "2054" %}selected{% endif %}>2054</option>
+                        <option value="QSMV" {% if form_data.FormType == "QSMV" %}selected{% endif %}>QSMV</option>
+                    </select>
+                </div>
+                
+
+                <div id="form2054" class="hidden">
+                    <div class="question">
+                        <label for="question1">
+                            1. A Responsible Officer (RO) or Property Administrator and
+                            Terminal Manager (TM) have been appointed in writing.
+                        </label>
+                        <div class="radio-row">
+                            <label class="radio-option">
+                                <input type="radio" id="q1_completed" name="question1" value="COMPLETED" />
+                                COMPLETED
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" id="q1_na" name="question1" value="NOT APPLICABLE" />
+                                NOT APPLICABLE
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label for="question2">
+                            2. Appointment and/or required delegation letters are on
+                            file.
+                        </label>
+                        <div class="radio-row">
+                            <label class="radio-option">
+                                <input type="radio" id="q2_completed" name="question2" value="COMPLETED" />
+                                COMPLETED
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" id="q2_na" name="question2" value="NOT APPLICABLE" />
+                                NOT APPLICABLE
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label for="question3">3. The RO/PA/TM perform oversight.</label>
+                        <div class="radio-row">
+                            <label class="radio-option">
+                                <input type="radio" id="q3_completed" name="question3" value="COMPLETED" />
+                                COMPLETED
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" id="q3_na" name="question3" value="NOT APPLICABLE" />
+                                NOT APPLICABLE
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label for="question4">
+                            4. Transactions (receipts, issues, inventories, etc.) are
+                            properly documented, reported, and stored.
+                        </label>
+                        <div class="radio-row">
+                            <label class="radio-option">
+                                <input type="radio" id="q4_completed" name="question4" value="COMPLETED" />
+                                COMPLETED
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" id="q4_na" name="question4" value="NOT APPLICABLE" />
+                                NOT APPLICABLE
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label for="question5">
+                            5. The RO/TM investigates and researches operational/storage
+                            discrepancies and submits required reports.
+                        </label>
+                        <div class="radio-row">
+                            <label class="radio-option">
+                                <input type="radio" id="q5_completed" name="question5" value="COMPLETED" />
+                                COMPLETED
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" id="q5_na" name="question5" value="NOT APPLICABLE" />
+                                NOT APPLICABLE
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label for="question6">
+                            6. The outgoing RO (TM and PA) and incoming RO (TM and PA)
+                            completed the DLA Form 2054.
+                        </label>
+                        <div class="radio-row">
+                            <label class="radio-option">
+                                <input type="radio" id="q6_completed" name="question6" value="COMPLETED" />
+                                COMPLETED
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" id="q6_na" name="question6" value="NOT APPLICABLE" />
+                                NOT APPLICABLE
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label for="question7">
+                            7. A minimum two week written notice was provided to DLA Energy
+                            prior to the departure of outgoing RO/PA.
+                        </label>
+                        <div class="radio-row">
+                            <label class="radio-option">
+                                <input type="radio" id="q7_completed" name="question7" value="COMPLETED" />
+                                COMPLETED
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" id="q7_na" name="question7" value="NOT APPLICABLE" />
+                                NOT APPLICABLE
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label for="question8">
+                            8. A publication familiarization program that includes DoD and
+                            DLA Energy publications is in place for DFSP personnel.
+                        </label>
+                        <div class="radio-row">
+                            <label class="radio-option">
+                                <input type="radio" id="q8_completed" name="question8" value="COMPLETED" />
+                                COMPLETED
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" id="q8_na" name="question8" value="NOT APPLICABLE" />
+                                NOT APPLICABLE
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label for="question9">
+                            9. The RO/TM/PA is advised of newly published or amended
+                            guidance.
+                        </label>
+                        <div class="radio-row">
+                            <label class="radio-option">
+                                <input type="radio" id="q9_completed" name="question9" value="COMPLETED" />
+                                COMPLETED
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" id="q9_na" name="question9" value="NOT APPLICABLE" />
+                                NOT APPLICABLE
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label for="question10">
+                            10. The RO/TM/PA has identified and appointed an Accountable
+                            Property System of Record (APSR) Administrator in writing on an
+                            annual basis.
+                        </label>
+                        <div class="radio-row">
+                            <label class="radio-option">
+                                <input type="radio" id="q10_completed" name="question10" value="COMPLETED" />
+                                COMPLETED
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" id="q10_na" name="question10" value="NOT APPLICABLE" />
+                                NOT APPLICABLE
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label for="question11">
+                            11. The RO or PA and TM have ensured the APSR Administrator
+                            validates user privileges within APSR annually at a minimum and
+                            documents the validation.
+                        </label>
+                        <div class="radio-row">
+                            <label class="radio-option">
+                                <input type="radio" id="q11_completed" name="question11" value="COMPLETED" />
+                                COMPLETED
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" id="q11_na" name="question11" value="NOT APPLICABLE" />
+                                NOT APPLICABLE
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label for="question12">
+                            12. The RO/TM/PA are aware and in compliance with
+                            responsibilities listed in policy.
+                        </label>
+                        <div class="radio-row">
+                            <label class="radio-option">
+                                <input type="radio" id="q12_completed" name="question12" value="COMPLETED" />
+                                COMPLETED
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" id="q12_na" name="question12" value="NOT APPLICABLE" />
+                                NOT APPLICABLE
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label for="question13">
+                            13. The End-of-Month (EOM) inventory adjustments and operating
+                            gain/loss transactions are processed within two business days
+                            following the last calendar day of each month.
+                        </label>
+                        <div class="radio-row">
+                            <label class="radio-option">
+                                <input type="radio" id="q13_completed" name="question13" value="COMPLETED" />
+                                COMPLETED
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" id="q13_na" name="question13" value="NOT APPLICABLE" />
+                                NOT APPLICABLE
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label for="question14">14. Inventory quantities are corrected to 60F or 15C.</label>
+                        <div class="radio-row">
+                            <label class="radio-option">
+                                <input type="radio" id="q14_completed" name="question14" value="COMPLETED" />
+                                COMPLETED
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" id="q14_na" name="question14" value="NOT APPLICABLE" />
+                                NOT APPLICABLE
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label for="question15">15. Inventories are documented according to policy.</label>
+                        <div class="radio-row">
+                            <label class="radio-option">
+                                <input type="radio" id="q15_completed" name="question15" value="COMPLETED" />
+                                COMPLETED
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" id="q15_na" name="question15" value="NOT APPLICABLE" />
+                                NOT APPLICABLE
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label for="question16">
+                            16. Minimum/maximum inventories are maintained according to the
+                            inventory management plan.
+                        </label>
+                        <div class="radio-row">
+                            <label class="radio-option">
+                                <input type="radio" id="q16_completed" name="question16" value="COMPLETED" />
+                                COMPLETED
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" id="q16_na" name="question16" value="NOT APPLICABLE" />
+                                NOT APPLICABLE
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label for="question17">
+                            17. Minimum inventory level violations lasting longer than 72
+                            hours are reported to the applicable offices.
+                        </label>
+                        <div class="radio-row">
+                            <label class="radio-option">
+                                <input type="radio" id="q17_completed" name="question17" value="COMPLETED" />
+                                COMPLETED
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" id="q17_na" name="question17" value="NOT APPLICABLE" />
+                                NOT APPLICABLE
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label for="question18">
+                            18. The physical inventory reflects all DLA Energy capitalized
+                            inventory including tanks, pipeline manifolds, breakout tanks,
+                            and refueling vehicle inventories.
+                        </label>
+                        <div class="radio-row">
+                            <label class="radio-option">
+                                <input type="radio" id="q18_completed" name="question18" value="COMPLETED" />
+                                COMPLETED
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" id="q18_na" name="question18" value="NOT APPLICABLE" />
+                                NOT APPLICABLE
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label for="question19">
+                            19. EOM Adjustments, Determinable Gains/Losses, and Regrades
+                            are recorded on DD Form 1348-8 (and DLA Form 1960 if applicable)
+                            and approved by the RO.
+                        </label>
+                        <div class="radio-row">
+                            <label class="radio-option">
+                                <input type="radio" id="q19_completed" name="question19" value="COMPLETED" />
+                                COMPLETED
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" id="q19_na" name="question19" value="NOT APPLICABLE" />
+                                NOT APPLICABLE
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label for="question20">
+                            20. The RO/TM signed DD Form 1348-8's and provided a copy to
+                            the applicable DLA Energy Region Office.
+                        </label>
+                        <div class="radio-row">
+                            <label class="radio-option">
+                                <input type="radio" id="q20_completed" name="question20" value="COMPLETED" />
+                                COMPLETED
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" id="q20_na" name="question20" value="NOT APPLICABLE" />
+                                NOT APPLICABLE
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label for="question21">
+                            21. The RO/TM signed the DLA Form 2057 and placed it in the
+                            Document Control File.
+                        </label>
+                        <div class="radio-row">
+                            <label class="radio-option">
+                                <input type="radio" id="q21_completed" name="question21" value="COMPLETED" />
+                                COMPLETED
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" id="q21_na" name="question21" value="NOT APPLICABLE" />
+                                NOT APPLICABLE
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label for="question22">
+                            22. The RO/TM signed the DLA Form 2056 and submitted it with
+                            the EOM paperwork.
+                        </label>
+                        <div class="radio-row">
+                            <label class="radio-option">
+                                <input type="radio" id="q22_completed" name="question22" value="COMPLETED" />
+                                COMPLETED
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" id="q22_na" name="question22" value="NOT APPLICABLE" />
+                                NOT APPLICABLE
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label for="question23">
+                            23. Gains and losses that exceed tolerance factors are
+                            investigated to determine the cause and documented/reported on
+                            the DD Form 1348-8, DFSP Inventory Accounting Document and End
+                            of Month Report.
+                        </label>
+                        <div class="radio-row">
+                            <label class="radio-option">
+                                <input type="radio" id="q23_completed" name="question23" value="COMPLETED" />
+                                COMPLETED
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" id="q23_na" name="question23" value="NOT APPLICABLE" />
+                                NOT APPLICABLE
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label for="question24">
+                            24. When gains/losses exceed established tolerances,
+                            investigations are conducted to determine the cause, documented
+                            and inventory records are adjusted by the actual
+                            quantity.
+                        </label>
+                        <div class="radio-row">
+                            <label class="radio-option">
+                                <input type="radio" id="q24_completed" name="question24" value="COMPLETED" />
+                                COMPLETED
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" id="q24_na" name="question24" value="NOT APPLICABLE" />
+                                NOT APPLICABLE
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label for="question25">
+                            25. Financial Liability Investigation of Property Loss (FLIPL)
+                            determinations are filed in Document Control File.
+                        </label>
+                        <div class="radio-row">
+                            <label class="radio-option">
+                                <input type="radio" id="q25_completed" name="question25" value="COMPLETED" />
+                                COMPLETED
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" id="q25_na" name="question25" value="NOT APPLICABLE" />
+                                NOT APPLICABLE
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label for="question26">
+                            26. In-transit variances are computed and recorded according to
+                            policy.
+                        </label>
+                        <div class="radio-row">
+                            <label class="radio-option">
+                                <input type="radio" id="q26_completed" name="question26" value="COMPLETED" />
+                                COMPLETED
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" id="q26_na" name="question26" value="NOT APPLICABLE" />
+                                NOT APPLICABLE
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label for="question27">
+                            27. Procedures are in place to ensure operating storage and in
+                            transit variances (gain/loss) are within tolerance.
+                        </label>
+                        <div class="radio-row">
+                            <label class="radio-option">
+                                <input type="radio" id="q27_completed" name="question27" value="COMPLETED" />
+                                COMPLETED
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" id="q27_na" name="question27" value="NOT APPLICABLE" />
+                                NOT APPLICABLE
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label for="question28">
+                            28. The gauging process includes the measurement of fuel, water
+                            and temperature.
+                        </label>
+                        <div class="radio-row">
+                            <label class="radio-option">
+                                <input type="radio" id="q28_completed" name="question28" value="COMPLETED" />
+                                COMPLETED
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" id="q28_na" name="question28" value="NOT APPLICABLE" />
+                                NOT APPLICABLE
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label for="question29">
+                            29. Each storage tank with a capacity of 10,000 US gallons or
+                            less has an individual certified strapping table/chart that
+                            shows measurements in feet, inches and 1/8 inch
+                            increments.
+                        </label>
+                        <div class="radio-row">
+                            <label class="radio-option">
+                                <input type="radio" id="q29_completed" name="question29" value="COMPLETED" />
+                                COMPLETED
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" id="q29_na" name="question29" value="NOT APPLICABLE" />
+                                NOT APPLICABLE
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label for="question30">
+                            30. Each storage tank with a capacity more than 10,000 US
+                            gallons has an individual certified strapping table/chart that
+                            shows measurements in feet, inches and 1/16 inch increments in
+                            accordance with API Manual of Petroleum Measurement Standards
+                            (MPMS) Chapter 3. Note: Locations that do not possess gauging
+                            charts in 1/16 increments must use those graduated in 1/8 inch
+                            increments (or metric equivalent) until the next API 653 or
+                            Steel Tank Inspection, when new charts will be generated.
+                        </label>
+                        <div class="radio-row">
+                            <label class="radio-option">
+                                <input type="radio" id="q30_completed" name="question30" value="COMPLETED" />
+                                COMPLETED
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" id="q30_na" name="question30" value="NOT APPLICABLE" />
+                                NOT APPLICABLE
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label for="question31">
+                            31. Strapping chart data points are correctly entered into the
+                            ATG and verified as accurate against the strapping chart
+                            conversion. A minimum of 21 data points are entered into the ATG
+                            System.
+                        </label>
+                        <div class="radio-row">
+                            <label class="radio-option">
+                                <input type="radio" id="q31_completed" name="question31" value="COMPLETED" />
+                                COMPLETED
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" id="q31_na" name="question31" value="NOT APPLICABLE" />
+                                NOT APPLICABLE
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label for="question32">
+                            32. ATG systems have been calibrated and calibration dates are
+                            current.
+                        </label>
+                        <div class="radio-row">
+                            <label class="radio-option">
+                                <input type="radio" id="q32_completed" name="question32" value="COMPLETED" />
+                                COMPLETED
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" id="q32_na" name="question32" value="NOT APPLICABLE" />
+                                NOT APPLICABLE
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label for="question33">
+                            33. ATGs used to receive from an external source (commercial
+                            contractor or another DFSP) are verified for accuracy on a
+                            monthly basis using DLA Form 2026.
+                        </label>
+                        <div class="radio-row">
+                            <label class="radio-option">
+                                <input type="radio" id="q33_completed" name="question33" value="COMPLETED" />
+                                COMPLETED
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" id="q33_na" name="question33" value="NOT APPLICABLE" />
+                                NOT APPLICABLE
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label for="question34">
+                            34. ATGs used for internal storage (tanks which receive fuel
+                            from within the same DFSP system, e.g. hydrant tanks) are
+                            verified for accuracy on a quarterly basis using DLA Form
+                            2026.
+                        </label>
+                        <div class="radio-row">
+                            <label class="radio-option">
+                                <input type="radio" id="q34_completed" name="question34" value="COMPLETED" />
+                                COMPLETED
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" id="q34_na" name="question34" value="NOT APPLICABLE" />
+                                NOT APPLICABLE
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label for="question35">
+                            35. DLA Forms 2026 are reviewed for noticeable increases in
+                            reported variations from previous DLA Form 2026's to identify
+                            negative trends, which may signal a failing ATG.
+                        </label>
+                        <div class="radio-row">
+                            <label class="radio-option">
+                                <input type="radio" id="q35_completed" name="question35" value="COMPLETED" />
+                                COMPLETED
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" id="q35_na" name="question35" value="NOT APPLICABLE" />
+                                NOT APPLICABLE
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label for="question36">
+                            36. Storage tanks are inventoried and documented according to
+                            policy.
+                        </label>
+                        <div class="radio-row">
+                            <label class="radio-option">
+                                <input type="radio" id="q36_completed" name="question36" value="COMPLETED" />
+                                COMPLETED
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" id="q36_na" name="question36" value="NOT APPLICABLE" />
+                                NOT APPLICABLE
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label for="question37">
+                            37. All transactions are successfully processed according to
+                            policy.
+                        </label>
+                        <div class="radio-row">
+                            <label class="radio-option">
+                                <input type="radio" id="q37_completed" name="question37" value="COMPLETED" />
+                                COMPLETED
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" id="q37_na" name="question37" value="NOT APPLICABLE" />
+                                NOT APPLICABLE
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label for="question38">
+                            38. Rejected transactions are cleared within two business
+                            days.
+                        </label>
+                        <div class="radio-row">
+                            <label class="radio-option">
+                                <input type="radio" id="q38_completed" name="question38" value="COMPLETED" />
+                                COMPLETED
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" id="q38_na" name="question38" value="NOT APPLICABLE" />
+                                NOT APPLICABLE
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label for="question39">
+                            39. APSR account ledgers are reconciled according to
+                            policy.
+                        </label>
+                        <div class="radio-row">
+                            <label class="radio-option">
+                                <input type="radio" id="q39_completed" name="question39" value="COMPLETED" />
+                                COMPLETED
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" id="q39_na" name="question39" value="NOT APPLICABLE" />
+                                NOT APPLICABLE
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label for="question40">40. All EOM Reports are retained according to policy.</label>
+                        <div class="radio-row">
+                            <label class="radio-option">
+                                <input type="radio" id="q40_completed" name="question40" value="COMPLETED" />
+                                COMPLETED
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" id="q40_na" name="question40" value="NOT APPLICABLE" />
+                                NOT APPLICABLE
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label for="question41">
+                            41. All Non-DoD Sales Documents (2AF DODAAC) were submitted to
+                            DLA Finance Energy-F8-FR.
+                        </label>
+                        <div class="radio-row">
+                            <label class="radio-option">
+                                <input type="radio" id="q41_completed" name="question41" value="COMPLETED" />
+                                COMPLETED
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" id="q41_na" name="question41" value="NOT APPLICABLE" />
+                                NOT APPLICABLE
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label for="question42">
+                            42. Original copies of the Non-DoD Sales Documents (2AF DODAAC)
+                            retained on file.
+                        </label>
+                        <div class="radio-row">
+                            <label class="radio-option">
+                                <input type="radio" id="q42_completed" name="question42" value="COMPLETED" />
+                                COMPLETED
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" id="q42_na" name="question42" value="NOT APPLICABLE" />
+                                NOT APPLICABLE
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label for="question43">
+                            43. Cash collections agents are appointed by the Defense
+                            Finance Accounting Service (DFAS) and the memorandum is
+                            filed.
+                        </label>
+                        <div class="radio-row">
+                            <label class="radio-option">
+                                <input type="radio" id="q43_completed" name="question43" value="COMPLETED" />
+                                COMPLETED
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" id="q43_na" name="question43" value="NOT APPLICABLE" />
+                                NOT APPLICABLE
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label for="question44">
+                            44. The DD Form 1898 (Original/Copy 1), Fuels Sales Slip or DD
+                            Form 1149, Invoice and Receipt/Shipping Document; DD Form 1131,
+                            Cash Collection Voucher; and SF Form 215, Deposit Slip, are
+                            retained on file for 6 years and 3 months.
+                        </label>
+                        <div class="radio-row">
+                            <label class="radio-option">
+                                <input type="radio" id="q44_completed" name="question44" value="COMPLETED" />
+                                COMPLETED
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" id="q44_na" name="question44" value="NOT APPLICABLE" />
+                                NOT APPLICABLE
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label for="question45">
+                            45. The collection agent who received the cash payment and the
+                            RO/PA or their designated representative both signed the DD Form
+                            1131 verifying the amount collected.
+                        </label>
+                        <div class="radio-row">
+                            <label class="radio-option">
+                                <input type="radio" id="q45_completed" name="question45" value="COMPLETED" />
+                                COMPLETED
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" id="q45_na" name="question45" value="NOT APPLICABLE" />
+                                NOT APPLICABLE
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label for="question46">
+                            46. Copies of the DD Forms 1898 (original/copy 1), DD Form 1131
+                            and SF Form 215 are forwarded to DLA Finance Energy F8-FR no
+                            later than the fifth workday of each calendar month.
+                        </label>
+                        <div class="radio-row">
+                            <label class="radio-option">
+                                <input type="radio" id="q46_completed" name="question46" value="COMPLETED" />
+                                COMPLETED
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" id="q46_na" name="question46" value="NOT APPLICABLE" />
+                                NOT APPLICABLE
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label for="question47">
+                            47. Sales/credits of DWCF aviation fuel are recorded on one of
+                            the following transaction source documents: DD Form 1898,
+                            Electronic Point of Sale Device (EPOSD), DD Form 1898-D,
+                            Alternate DoD/Federal Civil Customer Sale, DD Form 1898-F,
+                            Alternate Foreign Government /Commercial Customer Sale, or DD
+                            Form 1149, Invoice and Receipt/Shipping Document as
+                            applicable.
+                        </label>
+                        <div class="radio-row">
+                            <label class="radio-option">
+                                <input type="radio" id="q47_completed" name="question47" value="COMPLETED" />
+                                COMPLETED
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" id="q47_na" name="question47" value="NOT APPLICABLE" />
+                                NOT APPLICABLE
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label for="question48">
+                            48. The transaction source documents/data are retained in a
+                            Document Control File at the DFSP or alternate storage location
+                            per DLA Energy P-3, Document Control and Data Backup/Retention
+                            Policy Retained locally for the current and one previous Fiscal
+                            Year.
+                        </label>
+                        <div class="radio-row">
+                            <label class="radio-option">
+                                <input type="radio" id="q48_completed" name="question48" value="COMPLETED" />
+                                COMPLETED
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" id="q48_na" name="question48" value="NOT APPLICABLE" />
+                                NOT APPLICABLE
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label for="question49">
+                            49. Individual sales and credits transactions are transmitted
+                            on a Daily basis Daily is defined as the normal workdays
+                            excluding weekends, Government holidays, and military service
+                            training days observed at the installation.
+                        </label>
+                        <div class="radio-row">
+                            <label class="radio-option">
+                                <input type="radio" id="q49_completed" name="question49" value="COMPLETED" />
+                                COMPLETED
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" id="q49_na" name="question49" value="NOT APPLICABLE" />
+                                NOT APPLICABLE
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label for="question50">
+                            50. The RO/TM for the DFSP appointed a Records Management
+                            Custodian to ensure DFSP compliance to all prescribed
+                            document/data control, retention, and inspection policies and
+                            taht all transaction records are readily available for
+                            review/audit.
+                        </label>
+                        <div class="radio-row">
+                            <label class="radio-option">
+                                <input type="radio" id="q50_completed" name="question50" value="COMPLETED" />
+                                COMPLETED
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" id="q50_na" name="question50" value="NOT APPLICABLE" />
+                                NOT APPLICABLE
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label for="question51">
+                            51. Records/source data are maintained, stored, and retired
+                            according to policy.
+                        </label>
+                        <div class="radio-row">
+                            <label class="radio-option">
+                                <input type="radio" id="q51_completed" name="question51" value="COMPLETED" />
+                                COMPLETED
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" id="q51_na" name="question51" value="NOT APPLICABLE" />
+                                NOT APPLICABLE
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label for="question52">
+                            52. All databases (FMD, ADC, Fuel Master, Fuels Manager and
+                            Leak Manager databases) are backed up on properly labeled backup
+                            media on a daily/weekly/monthly schedule to ensure maximum
+                            safeguard against data loss. Copies of the backup medium are
+                            properly labeled as required for the Annual Backup and copies of
+                            the annual backup medium are maintained in proper storage for 6
+                            years and three months.
+                        </label>
+                        <div class="radio-row">
+                            <label class="radio-option">
+                                <input type="radio" id="q52_completed" name="question52" value="COMPLETED" />
+                                COMPLETED
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" id="q52_na" name="question52" value="NOT APPLICABLE" />
+                                NOT APPLICABLE
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label for="question53">
+                            53. The recovery routine and the annual inventory was performed
+                            on the auditable Fiscal Year backup CD/tape media to verify
+                            satisfactory management controls remain in place to prevent
+                            media loss and damage.
+                        </label>
+                        <div class="radio-row">
+                            <label class="radio-option">
+                                <input type="radio" id="q53_completed" name="question53" value="COMPLETED" />
+                                COMPLETED
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" id="q53_na" name="question53" value="NOT APPLICABLE" />
+                                NOT APPLICABLE
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label for="question54">
+                            54. The DD Form 1348-7, DFSP Shipment and Receipt Document, is
+                            used to record DLA Energy fuel shipments via tank truck, tank
+                            wagon, tractor trailer, rail car, intermodal container, and
+                            pipeline transport modes.
+                        </label>
+                        <div class="radio-row">
+                            <label class="radio-option">
+                                <input type="radio" id="q54_completed" name="question54" value="COMPLETED" />
+                                COMPLETED
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" id="q54_na" name="question54" value="NOT APPLICABLE" />
+                                NOT APPLICABLE
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label for="question55">
+                            55. Seal numbers are annotated on individual load shipment
+                            documents/meter tickets that accompany the delivery vehicle
+                            conveyance to the receipt stock point.
+                        </label>
+                        <div class="radio-row">
+                            <label class="radio-option">
+                                <input type="radio" id="q55_completed" name="question55" value="COMPLETED" />
+                                COMPLETED
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" id="q55_na" name="question55" value="NOT APPLICABLE" />
+                                NOT APPLICABLE
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label for="question56">
+                            56. Shipment transactions are processed by next business day
+                            following shipment.
+                        </label>
+                        <div class="radio-row">
+                            <label class="radio-option">
+                                <input type="radio" id="q56_completed" name="question56" value="COMPLETED" />
+                                COMPLETED
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" id="q56_na" name="question56" value="NOT APPLICABLE" />
+                                NOT APPLICABLE
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label for="question57">
+                            57. Receipt quantities are verified by approved receipt
+                            quantity verification methods.
+                        </label>
+                        <div class="radio-row">
+                            <label class="radio-option">
+                                <input type="radio" id="q57_completed" name="question57" value="COMPLETED" />
+                                COMPLETED
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" id="q57_na" name="question57" value="NOT APPLICABLE" />
+                                NOT APPLICABLE
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label for="question58">
+                            58. Variations between quantities shipped and quantity
+                            received, in excess of approved in-transit variances, are
+                            researched and appropriate actions taken to correct
+                            discrepancies and/or practices that caused the excessive
+                            variance.
+                        </label>
+                        <div class="radio-row">
+                            <label class="radio-option">
+                                <input type="radio" id="q58_completed" name="question58" value="COMPLETED" />
+                                COMPLETED
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" id="q58_na" name="question58" value="NOT APPLICABLE" />
+                                NOT APPLICABLE
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label for="question59">
+                            59. If theft or fraud was suspected in the delivery of any
+                            energy product, I notified DLA Energy CO, COR, QAR, DLA Energy
+                            region personnel and DLA Energy Fraud Counsel at (571) 767-5020
+                            and provided pertinent information (who, title/position, what,
+                            where, when, the underlying suspicion).
+                        </label>
+                        <div class="radio-row">
+                            <label class="radio-option">
+                                <input type="radio" id="q59_completed" name="question59" value="COMPLETED" />
+                                COMPLETED
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" id="q59_na" name="question59" value="NOT APPLICABLE" />
+                                NOT APPLICABLE
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label for="question60">
+                            60. If contacted by a federal, state or local criminal
+                            investigator or auditor regarding questions about DLA Energy
+                            products being delivered or payments for energy products, I
+                            obtained the investigators or auditors, name, title, name of
+                            agency and phone number and promptly forwarded the information
+                            to the DLA Energy CO, COR, quality personnel, region personnel.
+                            I notified the DLA Energy Fraud Counsel and Acquisition Counsel
+                            available by email or at (571) 767-5020.
+                        </label>
+                        <div class="radio-row">
+                            <label class="radio-option">
+                                <input type="radio" id="q60_completed" name="question60" value="COMPLETED" />
+                                COMPLETED
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" id="q60_na" name="question60" value="NOT APPLICABLE" />
+                                NOT APPLICABLE
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label for="question61">
+                            61. If contacted by a federal, state or local criminal
+                            investigator or auditor regarding questions about DLA Energy
+                            products being delivered or payments for energy products, I
+                            obtained the investigators or auditors, name, title, name of
+                            agency and phone number and forwarded the information to my
+                            service control point (NAVSUP, AFPA or APC), COR or your own
+                            agency fraud advisor.
+                        </label>
+                        <div class="radio-row">
+                            <label class="radio-option">
+                                <input type="radio" id="q61_completed" name="question61" value="COMPLETED" />
+                                COMPLETED
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" id="q61_na" name="question61" value="NOT APPLICABLE" />
+                                NOT APPLICABLE
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label for="question62">
+                            62. If fraud or theft was suspected in the delivery or receipt
+                            of energy products, I took steps to preserve the evidence of
+                            that theft or fraud so that DLA Energy may conduct further
+                            inquiry.
+                        </label>
+                        <div class="radio-row">
+                            <label class="radio-option">
+                                <input type="radio" id="q62_completed" name="question62" value="COMPLETED" />
+                                COMPLETED
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" id="q62_na" name="question62" value="NOT APPLICABLE" />
+                                NOT APPLICABLE
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label for="question63">
+                            63. If the prime energy supplier, its subcontractor, or other
+                            Government personnel or support contractors were suspected of
+                            theft or fraud, I refrained from expressing the suspicion to the
+                            contractor, subcontractor representatives, or other personnel
+                            whom I suspected.
+                        </label>
+                        <div class="radio-row">
+                            <label class="radio-option">
+                                <input type="radio" id="q63_completed" name="question63" value="COMPLETED" />
+                                COMPLETED
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" id="q63_na" name="question63" value="NOT APPLICABLE" />
+                                NOT APPLICABLE
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label for="question64">
+                            64. If aware of an ongoing investigation or audit, I maintained
+                            the confidentiality of the Governments inquiry into the matter
+                            and did not divulge it to persons without an official need to
+                            know.
+                        </label>
+                        <div class="radio-row">
+                            <label class="radio-option">
+                                <input type="radio" id="q64_completed" name="question64" value="COMPLETED" />
+                                COMPLETED
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" id="q64_na" name="question64" value="NOT APPLICABLE" />
+                                NOT APPLICABLE
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label for="question65">65. Completed Policy Review.</label>
+                        <div class="radio-row">
+                            <label class="radio-option">
+                                <input type="radio" id="q65_completed" name="question65" value="COMPLETED" />
+                                COMPLETED
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" id="q65_na" name="question65" value="NOT APPLICABLE" />
+                                NOT APPLICABLE
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label for="ro_name_last">66. RO/TM/PA NAME (LAST, FIRST):</label>
+                        <input type="text" id="ro_name_last" name="ro_name_last" placeholder="Enter Full Name" />
+                    </div>
+
+                    <div class="question">
+                        <label for="ro_signature_last">67. RO/TM/PA SIGNATURE AND DATE:</label>
+                        <input type="text" id="ro_signature_last" name="ro_signature_last"
+                               placeholder="Enter Signature and Date" />
+                    </div>
+                </div>
+
+                <div id="formQSMV" class="hidden">
+                    <div class="question">
+                        <label for="cdcReports">
+                            1a. CDC reports made IAW DLAR 4155.24, MILSTD-3004-1, and DoDM
+                            4140.25?
+                        </label>
+                        <select id="cdcReports" name="cdcReports">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <div class="question">
+                        <label for="cdcInvestigations">
+                            1b. CDCs investigated, resolved, cause identified, and
+                            preventive action(s) applied?
+                        </label>
+                        <select id="cdcInvestigations" name="cdcInvestigations">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <div class="question">
+                        <label for="ddForm3075">
+                            1c. DD Form 3075 Disposition Request used for CDCs for
+                            capitalized product?
+                        </label>
+                        <select id="ddForm3075" name="ddForm3075">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <div class="question">
+                        <label for="sf368">
+                            1d. SF 368 form used, and information entered into PDREP system
+                            by applicable service for CDCs for non-capitalized product
+                            (PQDR)?
+                        </label>
+                        <select id="sf368" name="sf368">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <div class="toggle-container">
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="remark_choice_1" value="remarks" onchange="toggleTextarea('remarks', 1)" >
+                                REMARKS
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="remark_choice_1" value="previous findings" onchange="toggleTextarea('previous', 1)">
+                                PREVIOUS FINDINGS
+                            </label>
+                        </div>
+                    
+                        <div class="toggle-section" id="remarks-section-1">
+                            <label>REMARKS:</label>
+                            <textarea class="styled-textarea" name="remark1"></textarea>
+                        </div>
+                    
+                        <div class="toggle-section" id="previous-section-1">
+                            <label>PREVIOUS FINDINGS (Cleared?)</label>
+                            <textarea class="styled-textarea" name="previous_finding1"> {{ previous_findings.previous_finding1|default:'' }}</textarea>
+                            <button type="button" class="save-finding" data-field="previous_finding1">Save</button>
+                        </div>
+                    
+                        <!-- Checkbox Group -->
+                        <div class="checkbox-group">
+                            <label><input type="checkbox" name="category1[]" value="Audit"> Audit</label>
+                            <label><input type="checkbox" name="category1[]" value="Inventory"> Inventory</label>
+                            <label><input type="checkbox" name="category1[]" value="Quality"> Quality</label>
+                            <label><input type="checkbox" name="category1[]" value="SRM"> SRM/Facilities</label>
+                            <label><input type="checkbox" name="category1[]" value="RM"> RM</label>
+                            <label><input type="checkbox" name="category1[]" value="BPS"> BPS</label>
+                        </div>
+                        
+                    </div>
+
+                    <div class="question">
+                        <label for="commercialLabRecords">
+                            2a. QARs maintaining records of samples submitted to the
+                            laboratory and not allowing contractors to communicate
+                            requirements to other contractors without government
+                            oversight?
+                        </label>
+                        <select id="commercialLabRecords" name="commercialLabRecords">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <div class="question">
+                        <label for="qarTaskTracking">
+                            2b. QARs tracking number of tasks that are ordered by the CO
+                            and not exceeding that amount?
+                        </label>
+                        <select id="qarTaskTracking" name="qarTaskTracking">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <div class="question">
+                        <label for="qarDirection">
+                            2c. QARs providing direction to the contracted lab without CO
+                            knowledge? Was there unauthorized work performed?
+                        </label>
+                        <select id="qarDirection" name="qarDirection">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <div class="question">
+                        <label for="qarKnowledge">
+                            2d. QARs knowledgeable on the SOW/PWS, grades of fuel covered,
+                            Turn-around Time (TAT), sample cans, etc.?
+                        </label>
+                        <select id="qarKnowledge" name="qarKnowledge">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <div class="question">
+                        <label for="qarMarketResearch">
+                            2e. QARs perform market research when use of a non-contract lab
+                            is required?
+                        </label>
+                        <select id="qarMarketResearch" name="qarMarketResearch">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <div class="toggle-container">
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="remark_choice_2" value="remarks"
+                                       onchange="toggleTextarea('remarks', 2)">
+                                REMARKS
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="remark_choice_2" value="previous"
+                                       onchange="toggleTextarea('previous', 2)">
+                                PREVIOUS FINDINGS
+                            </label>
+                        </div>
+
+                        <div class="toggle-section" id="remarks-section-2">
+                            <label>REMARKS:</label>
+                            <textarea class="styled-textarea" name="remark2"></textarea>
+                        </div>
+
+                        <div class="toggle-section" id="previous-section-2">
+                            <label>PREVIOUS FINDINGS (Cleared?)</label>
+                            <textarea class="styled-textarea" name="previous_finding2">{{ previous_findings.previous_finding2|default:'' }}</textarea>
+                            <button type="button" class="save-finding" data-field="previous_finding2">Save</button>
+                        </div>
+
+                        <div class="checkbox-group">
+                            <label><input type="checkbox" name="category2[]" value="Audit"> Audit</label>
+                            <label><input type="checkbox" name="category2[]" value="Inventory"> Inventory</label>
+                            <label><input type="checkbox" name="category2[]" value="Quality"> Quality</label>
+                            <label><input type="checkbox" name="category2[]" value="SRM"> SRM/Facilities</label>
+                            <label><input type="checkbox" name="category2[]" value="RM"> RM</label>
+                            <label><input type="checkbox" name="category2[]" value="BPS"> BPS</label>
+                        </div>
+                        
+                    </div>
+
+
+                    <div class="question">
+                        <label for="corLetter">3a. Copy of appointment letter on-hand?</label>
+                        <select id="corLetter" name="corLetter">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <div class="question">
+                        <label for="corRecords">3b. Property accountable records maintained?</label>
+                        <select id="corRecords" name="corRecords">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <div class="question">
+                        <label for="corDuties">
+                            3c. Duties described in appointment letter performed and
+                            documented?
+                        </label>
+                        <select id="corDuties" name="corDuties">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <div class="question">
+                        <label for="corMonthlyReport">
+                            3d.Using the PIEE CORT tool, QAR completed monthly COR report
+                            including a brief narrative of the significant performance areas
+                            of the month to include all assist actions, corrective actions,
+                            customer complaints, any operational problems or other matters
+                            of interest, and a complete explanation of any work scheduled or
+                            required to be performed but not performed during the reporting
+                            period?
+                        </label>
+                        <select id="corMonthlyReport" name="corMonthlyReport">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <div class="toggle-container">
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="remark_choice_3" value="remarks"
+                                       onchange="toggleTextarea('remarks', 3)">
+                                REMARKS
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="remark_choice_3" value="previous"
+                                       onchange="toggleTextarea('previous', 3)">
+                                PREVIOUS FINDINGS
+                            </label>
+                        </div>
+
+                        <div class="toggle-section" id="remarks-section-3">
+                            <label>REMARKS:</label>
+                            <textarea class="styled-textarea" name="remark3"></textarea>
+                        </div>
+
+                        <div class="toggle-section" id="previous-section-3">
+                            <label>PREVIOUS FINDINGS (Cleared?)</label>
+                            <textarea class="styled-textarea" name="previous_finding3">{{ previous_findings.previous_finding3|default:'' }}</textarea>
+                            <button type="button" class="save-finding" data-field="previous_finding3">Save</button>
+                        </div>
+
+                        <div class="checkbox-group">
+                            <label><input type="checkbox" name="category3[]" value="Audit"> Audit</label>
+                            <label><input type="checkbox" name="category3[]" value="Inventory"> Inventory</label>
+                            <label><input type="checkbox" name="category3[]" value="Quality"> Quality</label>
+                            <label><input type="checkbox" name="category3[]" value="SRM"> SRM/Facilities</label>
+                            <label><input type="checkbox" name="category3[]" value="RM"> RM</label>
+                            <label><input type="checkbox" name="category3[]" value="BPS"> BPS</label>
+                        </div>
+                        
+                    </div>
+
+
+                    <div class="question">
+                        <label for="facilityNameLocation">4a.1) Name and Location?</label>
+                        <select id="facilityNameLocation" name="facilityNameLocation">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <div class="question">
+                        <label for="contractInventory">
+                            4a.2) Inventory of active contracts including type of products
+                            and mode of shipments?
+                        </label>
+                        <select id="contractInventory" name="contractInventory">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <div class="question">
+                        <label for="facilityDiagram">4a.3) Facility diagram including key process locations?</label>
+                        <select id="facilityDiagram" name="facilityDiagram">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <div class="question">
+                        <label for="personnelRecords">4a.4) Key contractor, government or FSA personnel?</label>
+                        <select id="personnelRecords" name="personnelRecords">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+                    <div class="question">
+                        <label for="laboratoryCapability">4a.5) Laboratory capability?</label>
+                        <select id="laboratoryCapability" name="laboratoryCapability">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <div class="question">
+                        <label for="pasReport">
+                            4a.6) If performed, a copy of the PAS or Post Award Conference
+                            Report?
+                        </label>
+                        <select id="pasReport" name="pasReport">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <div class="question">
+                        <label for="contractorAuthorization">
+                            4a.7) Documentation of a contractors authorization to ship
+                            under CoC or ARP?
+                        </label>
+                        <select id="contractorAuthorization" name="contractorAuthorization">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <div class="question">
+                        <label for="carsIssued">
+                            4a.8) Documentation of and CARs or Discrepancy Notice
+                            issued?
+                        </label>
+                        <select id="carsIssued" name="carsIssued">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <div class="question">
+                        <label for="miscInfo">
+                            4a.9) Miscellaneous information (directions to the facility,
+                            hotels, restaurants, airport, etc.)?
+                        </label>
+                        <select id="miscInfo" name="miscInfo">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+                    <div class="toggle-container">
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="remark_choice_4" value="remarks"
+                                       onchange="toggleTextarea('remarks', 4)">
+                                REMARKS
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="remark_choice_4" value="previous"
+                                       onchange="toggleTextarea('previous', 4)">
+                                PREVIOUS FINDINGS
+                            </label>
+                        </div>
+
+                        <div class="toggle-section" id="remarks-section-4">
+                            <label>REMARKS:</label>
+                            <textarea class="styled-textarea" name="remark4"></textarea>
+                        </div>
+
+                        <div class="toggle-section" id="previous-section-4">
+                            <label>PREVIOUS FINDINGS (Cleared?)</label>
+                            <textarea class="styled-textarea" name="previous_finding4">{{ previous_findings.previous_finding4|default:'' }}</textarea>
+                            <button type="button" class="save-finding" data-field="previous_finding4">Save</button>
+                        </div>
+
+                        <div class="checkbox-group">
+                            <label><input type="checkbox" name="category4[]" value="Audit"> Audit</label>
+                            <label><input type="checkbox" name="category4[]" value="Inventory"> Inventory</label>
+                            <label><input type="checkbox" name="category4[]" value="Quality"> Quality</label>
+                            <label><input type="checkbox" name="category4[]" value="SRM"> SRM/Facilities</label>
+                            <label><input type="checkbox" name="category4[]" value="RM"> RM</label>
+                            <label><input type="checkbox" name="category4[]" value="BPS"> BPS</label>
+                        </div>
+                        
+                    </div>
+
+                    <div class="question">
+                        <label for="qarReviewedSolicitation">
+                            4b.1a) QAR reviewed solicitation and contract data
+                            packages? and Recommendations & deficiencies reported using DD Form 1716?
+                        </label>
+                        <select id="qarReviewedSolicitation" name="qarReviewedSolicitation">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <div class="question">
+                        <label for="ddForm1716">
+                            4b.1b) Performed assigned PAS, recorded results on the proper PAS report
+                            forms and sent to the requesting Contracting Officer?
+                        </label>
+                        <select id="ddForm1716" name="ddForm1716">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+                    <div class="question">
+                        <label for="postAwardContracts">
+                            4b.2a) COCO and GOCO contract files maintained and
+                            current?
+                        </label>
+                        <select id="postAwardContracts" name="postAwardContracts">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <div class="question">
+                        <label for="pipelineTariffReview">
+                            4b.2b) Review assigned contracts, pipeline tariffs, and FSAs
+                            to decide the nature and scope of the procurement and the details of QA/QS responsibilities
+                            in the supply chain or service.
+                        </label>
+                        <select id="pipelineTariffReview" name="pipelineTariffReview">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+                    <div class="question">
+                        <label for="qcpReview">
+                            4c.1) Review of written description of contractor's Quality
+                            Control Plan (QCP) made at beginning of contractand at other
+                            times deemed necessary?
+                        </label>
+                        <select id="qcpReview" name="qcpReview">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <div class="question">
+                        <label for="qcpAdequacy">
+                            4c.2) Reviewed to ensure adequacy, including additive
+                            injection and filtration capabilities?
+                        </label>
+                        <select id="qcpAdequacy" name="qcpAdequacy">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <div class="question">
+                        <label for="contractorSpecAvailable">
+                            4c.3) Recommended changes to ensure quality control system
+                            acceptable to Government?
+                        </label>
+                        <select id="contractorSpecAvailable" name="contractorSpecAvailable">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+                    <div class="question">
+                        <label for="postAwardVisit">
+                            4d) Copies of product specification, test methods, and other
+                            standards cited in contract are available and current?
+                        </label>
+                        <select id="postAwardVisit" name="postAwardVisit">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <div class="question">
+                        <label for="postAwardConference">
+                            4e) Post Award orientation visit made? Findings reported to
+                            contracting?
+                        </label>
+                        <select id="postAwardConference" name="postAwardConference">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <div class="question">
+                        <label for="customeCallVisit">
+                            4f) Participated in Post Award Conference call with
+                            contracting?
+                        </label>
+                        <select id="customeCallVisit" name="customeCallVisit">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <div class="question">
+                        <label for="customerAssistanceVisit">
+                            4g) Conduct Customer Assistance Visits (CAVs) when
+                            requested and able? Prepared a trip report to document each CAV, including
+                            issues and action items? Follow-up on action items and document
+                            steps taken?
+                        </label>
+                        <select id="customerAssistanceVisit" name="customerAssistanceVisit">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <div class="question">
+                        <label for="tankCleaning">3a) Tank cleaning requirements identified and met?</label>
+                        <select id="tankCleaning" name="tankCleaning">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <div class="question">
+                        <label for="sulfideTesting">3b) Sulfide testing of water bottoms performed?</label>
+                        <select id="sulfideTesting" name="sulfideTesting">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <div class="question">
+                        <label for="samplingTesting">3c) Sampling and testing performed IAW MILSTD-3004-1?</label>
+                        <select id="samplingTesting" name="samplingTesting">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <div class="question">
+                        <label for="qaspDeveloped">3d) For service contracts, is a QASP developed and followed?</label>
+                        <select id="qaspDeveloped" name="qaspDeveloped">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <div class="question">
+                        <label for="staticStockRecords">
+                            3e) Records maintained on static stock (Long Term Storage)
+                            including receipt documentation and all subsequent laboratory
+                            reports?
+                        </label>
+                        <select id="staticStockRecords" name="staticStockRecords">
+                            <option value="">SELECT</option>
+
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <div class="question">
+                        <label for="stockRotationPlan">
+                            3f) DD Form 2512, Bulk Fuel Stock Rotation Plan used to submit
+                            rotation plan to DLA Energy IAW DoDM 4140.25?
+                        </label>
+                        <select id="stockRotationPlan" name="stockRotationPlan">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <div class="question">
+                        <label for="rotationTimetable">
+                            3g) Rotation timetable (DoDM 4140.25) used to determine stock
+                            rotation?
+                        </label>
+                        <select id="rotationTimetable" name="rotationTimetable">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <div class="question">
+                        <label for="qarAudits">
+                            4a) QAR maintains records on audits used to determine future
+                            audit requirements?
+                        </label>
+                        <select id="qarAudits" name="qarAudits">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <div class="question">
+                        <label for="LabTestReports">
+                            4b) Lab test reports, including correlation
+                            testing, on file?
+                        </label>
+                        <select id="LabTestReports" name="LabTestReports">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <div class="question">
+                        <label for="labCalibration">
+                            4c) Laboratory equipment calibration performed and records
+                            available?
+                        </label>
+                        <select id="labCalibration" name="labCalibration">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <div class="question">
+                        <label for="currentRegulatoryDocs">
+                            4d) Current applicable regulatory, specifications, and
+                            handbooks available at each location? (See DoDM 4140.25)
+                        </label>
+                        <select id="currentRegulatoryDocs" name="currentRegulatoryDocs">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <div class="question">
+                        <label for="incidentReport">
+                            4e) For any incident requiring investigation, did the QAR
+                            prepare an Incident Report containing all pertinent information,
+                            results of investigation, actions taken, conclusions, and
+                            recommendations?
+                        </label>
+                        <select id="incidentReport" name="incidentReport">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <div class="question">
+                        <label for="vesselLoadingRecords">
+                            4f) Vessel loading/discharge packages on file/uploaded into
+                            EBS
+                            RM using proper naming convention IAW QAA 2020-01&02?
+                        </label>
+                        <select id="vesselLoadingRecords" name="vesselLoadingRecords">
+                            <option value="">SELECT</option>
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <div class="question">
+                        <label for="derUpdated">
+                            4g) Updated DER developed and maintained IAW DLA SOP
+                            4155.04-001?
+                        </label>
+                        <select id="derUpdated" name="derUpdated">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <div class="question">
+                        <label for="internalInspections">
+                            5a) Perform internal inspections of storage tanks and modes of
+                            transport, as needed and under proper safety rules and DLA
+                            Energy policy?
+                        </label>
+                        <select id="internalInspections" name="internalInspections">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <div class="question">
+                        <label for="qarDiary">
+                            5b) Keeps a diary of relevant actions, significant events, data
+                            related to each product movement, as well as any other visit to
+                            a contractor or government involving DLA Energys
+                            mission?
+                        </label>
+                        <select id="qarDiary" name="qarDiary">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <div class="question">
+                        <label for="discrepanciesReported">
+                            5c) Informs QM, MSC, DLA Energy Tanker Division (FENBC), and
+                            DLA Energy-A of discrepancies or problems affecting tanker
+                            movements, as soon as possible?
+                        </label>
+                        <select id="discrepanciesReported" name="discrepanciesReported">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+
+                    </div>
+                    <div class="toggle-container">
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="remark_choice_5" value="remarks"
+                                       onchange="toggleTextarea('remarks', 5)">
+                                REMARKS
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="remark_choice_5" value="previous"
+                                       onchange="toggleTextarea('previous', 5)">
+                                PREVIOUS FINDINGS
+                            </label>
+                        </div>
+
+                        <div class="toggle-section" id="remarks-section-5">
+                            <label>REMARKS:</label>
+                            <textarea class="styled-textarea" name="remark5"></textarea>
+                        </div>
+
+                        <div class="toggle-section" id="previous-section-5">
+                            <label>PREVIOUS FINDINGS (Cleared?)</label>
+                            <textarea class="styled-textarea" name="previous_finding5">{{ previous_findings.previous_finding5|default:'' }}</textarea>
+                            <button type="button" class="save-finding" data-field="previous_finding5">Save</button>
+                        </div>
+
+                        <div class="checkbox-group">
+                            <label><input type="checkbox" name="category5[]" value="Audit"> Audit</label>
+                            <label><input type="checkbox" name="category5[]" value="Inventory"> Inventory</label>
+                            <label><input type="checkbox" name="category5[]" value="Quality"> Quality</label>
+                            <label><input type="checkbox" name="category5[]" value="SRM"> SRM/Facilities</label>
+                            <label><input type="checkbox" name="category5[]" value="RM"> RM</label>
+                            <label><input type="checkbox" name="category5[]" value="BPS"> BPS</label>
+                        </div>
+                        
+                    </div>
+
+
+                    <div class="question">
+                        <label for="AllbreachIssued">
+                            5c.1) All nonconformance's or breach of contract are issued a
+                            CAR?
+                        </label>
+                        <select id="AllbreachIssued" name="AllbreachIssued">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+
+                    <div class="question">
+                        <label for="Allcarsentered">
+                            5c.2) All CARs entered into EBS as ZC QNs AND entered into EBS
+                            RM?
+                        </label>
+                        <select id="Allcarsentered" name="Allcarsentered">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <div class="question">
+                        <label for="FactorsMethod">
+                            5c.3) The following factors were considered in determining the CAR
+                            method:
+                        </label>
+                        <select id="FactorsMethod" name="FactorsMethod">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <div class="question">
+                        <label for="CriticalityDefect">5c.3a) Criticality of the defect?</label>
+                        <select id="CriticalityDefect" name="CriticalityDefect">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <div class="question">
+                        <label for="DefectObserved">5c.3b) The number of times the defect was observed?</label>
+                        <select id="DefectObserved" name="DefectObserved">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <div class="question">
+                        <label for="RealiblityOperability">
+                            5c.3c) The effects of the defect on reliability,
+                            maintainability or operability?
+                        </label>
+                        <select id="RealiblityOperability" name="RealiblityOperability">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <div class="question">
+                        <label for="ContractorplanAction">5c.3d) Contractor has plan or taken corrective action?</label>
+                        <select id="ContractorplanAction" name="ContractorplanAction">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <div class="question">
+                        <label for="ContractortoAction">5c.3e) Contractor reluctant to begin corrective action?</label>
+                        <select id="ContractortoAction" name="ContractortoAction">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <div class="question">
+                        <label for="Weatheretc">
+                            5c.3f) Whether ineffective corrective action has been previously
+                            applied, etc.?
+                        </label>
+                        <select id="Weatheretc" name="Weatheretc">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <div class="question">
+                        <label for="AllCar">5c.4) All CARs are numbered, and a log maintained.</label>
+                        <select id="AllCar" name="AllCar">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <div class="question">
+                        <label for="QARverifiedprocessaudits">
+                            5c.5) QAR verified that corrective action proposed,
+                            initiated, and implemented by contractor is adequate as evidenced by the absence or
+                            reduction of the defect in future follow-on analyses of data or process audits?
+                        </label>
+                        <select id="QARverifiedprocessaudits" name="QARverifiedprocessaudits">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <div class="question">
+                        <label for="level1Car">6a) Level I CAR?</label>
+                        <select id="level1Car" name="level1Car">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <!-- Level II CAR -->
+                    <div class="question">
+                        <label for="level2Car">6b) Level II CAR?</label>
+                        <select id="level2Car" name="level2Car">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <!-- Level III CAR -->
+                    <div class="question">
+                        <label for="level3Car">6c) Level III CAR?</label>
+                        <select id="level3Car" name="level3Car">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <!-- Level IV CAR -->
+                    <div class="question">
+                        <label for="level4Car">6d) Level IV CAR?</label>
+                        <select id="level4Car" name="level4Car">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <div class="question">
+                        <label for="qarCarFollowUp">
+                            7) QAR followed up to verify that corrective action was taken
+                            and that it has proven effective in eliminating the root
+                            cause?
+                        </label>
+                        <select id="qarCarFollowUp" name="qarCarFollowUp">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+
+                    <div class="toggle-container">
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="remark_choice_6" value="remarks"
+                                       onchange="toggleTextarea('remarks', 6)">
+                                REMARKS
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="remark_choice_6" value="previous"
+                                       onchange="toggleTextarea('previous', 6)">
+                                PREVIOUS FINDINGS
+                            </label>
+                        </div>
+
+                        <div class="toggle-section" id="remarks-section-6">
+                            <label>REMARKS:</label>
+                            <textarea class="styled-textarea" name="remark6"></textarea>
+                        </div>
+
+                        <div class="toggle-section" id="previous-section-6">
+                            <label>PREVIOUS FINDINGS (Cleared?)</label>
+                            <textarea class="styled-textarea" name="previous_finding6">{{ previous_findings.previous_finding6|default:'' }}</textarea>
+                            <button type="button" class="save-finding" data-field="previous_finding6">Save</button>
+                        </div>
+
+                        <div class="checkbox-group">
+                            <label><input type="checkbox" name="category6[]" value="Audit"> Audit</label>
+                            <label><input type="checkbox" name="category6[]" value="Inventory"> Inventory</label>
+                            <label><input type="checkbox" name="category6[]" value="Quality"> Quality</label>
+                            <label><input type="checkbox" name="category6[]" value="SRM"> SRM/Facilities</label>
+                            <label><input type="checkbox" name="category6[]" value="RM"> RM</label>
+                            <label><input type="checkbox" name="category6[]" value="BPS"> BPS</label>
+                        </div>
+                        
+                    </div>
+
+
+
+                    <div class="question">
+                        <label for="qarRecommendARP">
+                            5d.1) For contractor-owned contractor-operated (COCO) or
+                            government-owned contractor-operated (GOCO) facilities, did the
+                            QAR recommend with supporting documentation to the Quality
+                            Manager that ARP be authorized?
+                        </label>
+                        <select id="qarRecommendARP" name="qarRecommendARP">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <div class="question">
+                        <label for="arpAuthorization">
+                            5d.2) For GOCO/COCOs currently on ARP, is authorization to
+                            implement ARP issued by the Administrative Contracting Officer
+                            (ACO) and on-hand?
+                        </label>
+                        <select id="arpAuthorization" name="arpAuthorization">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <div class="question">
+                        <label for="pipelineArpRecommendation">
+                            5d.3) For pipeline operations covered by an operating
+                            agreement, did the QAR forward the ARP recommendation to the
+                            Quality Manager?
+                        </label>
+                        <select id="pipelineArpRecommendation" name="pipelineArpRecommendation">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <div class="question">
+                        <label for="qualityManagerApproval">
+                            5d.4) For pipeline operations covered by an operating
+                            agreement, did the Quality Manager in writing grant permission
+                            to use ARP?
+                        </label>
+                        <select id="qualityManagerApproval" name="qualityManagerApproval">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <div class="question">
+                        <label for="arpCopiesDistributed">
+                            5d.5) Were copies of the authorization letter sent to the
+                            pipeline operator, the QAR, and DLA EnergyFEB?
+                        </label>
+                        <select id="arpCopiesDistributed" name="arpCopiesDistributed">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <div class="toggle-container">
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="remark_choice_7" value="remarks"
+                                       onchange="toggleTextarea('remarks', 7)">
+                                REMARKS
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="remark_choice_7" value="previous"
+                                       onchange="toggleTextarea('previous', 7)">
+                                PREVIOUS FINDINGS
+                            </label>
+                        </div>
+
+                        <div class="toggle-section" id="remarks-section-7">
+                            <label>REMARKS:</label>
+                            <textarea class="styled-textarea" name="remark7"></textarea>
+                        </div>
+
+                        <div class="toggle-section" id="previous-section-7">
+                            <label>PREVIOUS FINDINGS (Cleared?)</label>
+                            <textarea class="styled-textarea" name="previous_finding7">{{ previous_findings.previous_finding7|default:'' }}</textarea>
+                            <button type="button" class="save-finding" data-field="previous_finding7">Save</button>
+                        </div>
+
+                        <div class="checkbox-group">
+                            <label><input type="checkbox" name="category7[]" value="Audit"> Audit</label>
+                            <label><input type="checkbox" name="category7[]" value="Inventory"> Inventory</label>
+                            <label><input type="checkbox" name="category7[]" value="Quality"> Quality</label>
+                            <label><input type="checkbox" name="category7[]" value="SRM"> SRM/Facilities</label>
+                            <label><input type="checkbox" name="category7[]" value="RM"> RM</label>
+                            <label><input type="checkbox" name="category7[]" value="BPS"> BPS</label>
+                        </div>
+                        
+                    </div>
+
+                    <!-- Out of Round -->
+                    <div class="question">
+                        <label for="tankOutOfRound">1a) Out of Round?</label>
+                        <div id="outOfRoundContainer">
+                            <input type="text" name="outOfRound[]" placeholder="Enter Value" />
+                        </div>
+                        <button type="button" onclick="addField('outOfRoundContainer')">
+                            + Add More
+                        </button>
+                    </div>
+
+                    <!-- Type of Roof -->
+                    <div class="question">
+                        <label for="tankOutOfRound">1b) Type of Roof:</label>
+                        <div id="typeOfRoofContainer">
+                            <input type="text" name="typeOfRoof[]" placeholder="Enter Value" />
+                        </div>
+                        <button type="button" onclick="addField('typeOfRoofContainer')">
+                            + Add More
+                        </button>
+                    </div>
+
+                    <!-- Type of Floor -->
+                    <div class="question">
+                        <label for="tankOutOfRound">1c) Type of Floor:</label>
+                        <div id="typeOfFloorContainer">
+                            <input type="text" name="typeOfFloor[]" placeholder="Enter Value" />
+                        </div>
+                        <button type="button" onclick="addField('typeOfFloorContainer')">
+                            + Add More
+                        </button>
+                    </div>
+
+                    <!-- Type of Suction -->
+                    <div class="question">
+                        <label for="tankOutOfRound">1d) Type of Suction:</label>
+                        <div id="typeOfSuctionContainer">
+                            <input type="text" name="typeOfSuction[]" placeholder="Enter Value" />
+                        </div>
+                        <button type="button" onclick="addField('typeOfSuctionContainer')">
+                            + Add More
+                        </button>
+                    </div>
+
+                    <!-- Size of Suction -->
+                    <div class="question">
+                        <label for="tankOutOfRound">1e) Size of Suction:</label>
+                        <div id="sizeOfSuctionContainer">
+                            <input type="text" name="sizeOfSuction[]" placeholder="Enter Value" />
+                        </div>
+                        <button type="button" onclick="addField('sizeOfSuctionContainer')">
+                            + Add More
+                        </button>
+                    </div>
+
+                    <!-- Type of Sump -->
+                    <div class="question">
+                        <label for="tankOutOfRound">1f) Type of Sump:</label>
+                        <div id="typeOfSumpContainer">
+                            <input type="text" name="typeOfSump[]" placeholder="Enter Value" />
+                        </div>
+                        <button type="button" onclick="addField('typeOfSumpContainer')">
+                            + Add More
+                        </button>
+                    </div>
+
+                    <!-- Position of Sump -->
+                    <div class="question">
+                        <label for="tankOutOfRound">1g) Position of Sump:</label>
+                        <div id="positionOfSumpContainer">
+                            <input type="text" name="positionOfSump[]" placeholder="Enter Value" />
+                        </div>
+                        <button type="button" onclick="addField('positionOfSumpContainer')">
+                            + Add More
+                        </button>
+                    </div>
+
+                    <!-- Water Elimination Ability -->
+                    <div class="question">
+                        <label for="tankOutOfRound">1h) Water Elimination Ability:</label>
+                        <div id="waterEliminationContainer">
+                            <input type="text" name="waterElimination[]" placeholder="Enter Value" />
+                        </div>
+                        <button type="button" onclick="addField('waterEliminationContainer')">
+                            + Add More
+                        </button>
+                    </div>
+
+                    <!-- Sampling Hatch -->
+                    <div class="question">
+                        <label for="tankOutOfRound">1i) Sampling Hatch:</label>
+                        <div id="samplingHatchContainer">
+                            <input type="text" name="samplingHatch[]" placeholder="Enter Value" />
+                        </div>
+                        <button type="button" onclick="addField('samplingHatchContainer')">
+                            + Add More
+                        </button>
+                    </div>
+
+                    <!-- Gauging Hatch -->
+                    <div class="question">
+                        <label for="tankOutOfRound">1j) Gauging Hatch:</label>
+                        <div id="gaugingHatchContainer">
+                            <input type="text" name="gaugingHatch[]" placeholder="Enter Value" />
+                        </div>
+                        <button type="button" onclick="addField('gaugingHatchContainer')">
+                            + Add More
+                        </button>
+                    </div>
+
+                    <!-- Automatic Gauging Technology -->
+                    <div class="question">
+                        <label for="tankOutOfRound">1k) Automatic Gauging :</label>
+                        <div id="automaticGaugingContainer">
+                            <input type="text" name="automaticGauging[]" placeholder="Enter Value" />
+                        </div>
+                        <button type="button" onclick="addField('automaticGaugingContainer')">
+                            + Add More
+                        </button>
+                    </div>
+                    <div class="question">
+                        <label for="tankOutOfRound">1k) Technology:</label>
+                        <div id="automaticGaugingContainer">
+                            <input type="text" name="technology[]" placeholder="Enter Value" />
+                        </div>
+                        <button type="button" onclick="addField('automaticGaugingContainer')">
+                            + Add More
+                        </button>
+                    </div>
+
+                    <script>
+                        function addField(containerId) {
+                            let container = document.getElementById(containerId);
+                            let input = document.createElement("input");
+                            input.type = "text";
+                            input.name = container.firstChild.name;
+                            input.placeholder = "Enter Value";
+                            container.appendChild(input);
+                        }
+                    </script>
+
+                    <div class="question">
+                        <label for="pipingDistance">2a) Distance from tank to manifold?</label>
+                        <input type="text" id="pipingDistance" name="pipingDistance"
+                               placeholder="Enter distance (meters)" />
+                    </div>
+
+                    <div class="question">
+                        <label for="numberOfBends">2b) Number of bends and degree of bends?</label>
+                        <input type="text" id="numberOfBends" name="numberOfBends"
+                               placeholder="Enter number of bends" />
+                    </div>
+
+                    <div class="question">
+                        <label for="positiveSegregation">2c) Type of positive segregation between products?</label>
+                        <input type="text" id="positiveSegregation" name="positiveSegregation"
+                               placeholder="Enter type" />
+                    </div>
+
+                    <div class="question">
+                        <label for="lowPointDrains">2d) Low point drains?</label>
+                        <input type="text" id="lowPointDrains" name="lowPointDrains" placeholder="Enter YES/NO" />
+                    </div>
+
+                    <div class="question">
+                        <label for="reliefValves">2e) Relief (Air Bleed) valves?</label>
+                        <input type="text" id="reliefValves" name="reliefValves" placeholder="Enter YES/NO" />
+                    </div>
+
+                    <div class="question">
+                        <label for="piggingLocation">3a) Pigging station Location?</label>
+                        <input type="text" id="piggingLocation" name="piggingLocation" placeholder="Enter location" />
+                    </div>
+
+                    <div class="question">
+                        <label for="pigType">3b) Type of Pig Allowed?</label>
+                        <input type="text" id="pigType" name="pigType" placeholder="Enter type" />
+                    </div>
+
+                    <div class="question">
+                        <label for="pigCleaning">3c) Cleaning and Flushing Capability?</label>
+                        <input type="text" id="pigCleaning" name="pigCleaning" placeholder="Enter YES/NO" />
+                    </div>
+
+                    <div class="question">
+                        <label for="pumpLocation">4a) Pumps Location?</label>
+                        <input type="text" id="pumpLocation" name="pumpLocation" placeholder="Enter location" />
+                    </div>
+
+                    <div class="question">
+                        <label for="pumpRatedCapacity">4b) Rated Capacity?</label>
+                        <input type="text" id="pumpRatedCapacity" name="pumpRatedCapacity"
+                               placeholder="Enter capacity (GPM)" />
+                    </div>
+
+                    <div class="question">
+                        <label for="valveLocation">5a) Valve Locations?</label>
+                        <input type="text" id="valveLocation" name="valveLocation" placeholder="Enter locations" />
+                    </div>
+
+                    <div class="question">
+                        <label for="valveType">5b) Valve Type?</label>
+                        <input type="text" id="valveType" name="valveType" placeholder="Enter type" />
+                    </div>
+
+                    <div class="question">
+                        <label for="additiveLocation">6a) Additive Injection System: Location?</label>
+                        <input type="text" id="additiveLocation" name="additiveLocation" placeholder="Enter location" />
+                    </div>
+
+                    <div class="question">
+                        <label for="additiveType">6b) Additive Injection System: Type?</label>
+                        <input type="text" id="additiveType" name="additiveType" placeholder="Enter type" />
+                    </div>
+
+                    <div class="question">
+                        <label for="orderInjection">6c) Additive Injection System: Order of Injection?</label>
+                        <input type="text" id="orderInjection" name="orderInjection" placeholder="Enter order" />
+                    </div>
+
+                    <div class="question">
+                        <label for="distanceInjectors">
+                            6d) Additive Injection System: Distance between SDA and FSII
+                            injectors?
+                        </label>
+                        <input type="text" id="distanceInjectors" name="distanceInjectors"
+                               placeholder="Enter distance" />
+                    </div>
+
+                    <div class="question">
+                        <label for="storageLocation">7a) Additive Storage: Location?</label>
+                        <input type="text" id="storageLocation" name="storageLocation" placeholder="Enter location" />
+                    </div>
+
+                    <div class="question">
+                        <label for="storageTankType">7b) Additive Storage: Tank Type?</label>
+                        <input type="text" id="storageTankType" name="storageTankType" placeholder="Enter type" />
+                    </div>
+
+                    <div class="question">
+                        <label for="dryingSystem">7c) Additive Storage: Drying System?</label>
+                        <input type="text" id="dryingSystem" name="dryingSystem" placeholder="Enter system" />
+                    </div>
+
+                    <div class="question">
+                        <label for="meterLocation">8a) Fuel Meters: Locations?</label>
+                        <input type="text" id="meterLocation" name="meterLocation" placeholder="Enter locations" />
+                    </div>
+
+                    <div class="question">
+                        <label for="meterType">8b) Fuel Meters: Type?</label>
+                        <input type="text" id="meterType" name="meterType" placeholder="Enter type" />
+                    </div>
+
+                    <div class="question">
+                        <label for="meterCapacity">8c) Fuel Meters: Rated Capacity?</label>
+                        <input type="text" id="meterCapacity" name="meterCapacity" placeholder="Enter capacity" />
+                    </div>
+
+                    <div class="question">
+                        <label for="meterProving">8d) Fuel Meters: Type Proving?</label>
+                        <input type="text" id="meterProving" name="meterProving" placeholder="Enter type" />
+                    </div>
+
+                    <div class="question">
+                        <label for="meterLastProved">8e) Fuel Meters: Date last proved?</label>
+                        <input type="text" id="meterLastProved" name="meterLastProved" placeholder="Enter date" />
+                    </div>
+
+                    <div class="question">
+                        <label for="fillStations">9) Truck Fillstands?</label>
+                        <input type="text" id="fillStations" name="fillStations" placeholder="Enter number" />
+                    </div>
+
+                    <div class="question">
+                        <label for="filterType">10) Filters and Filter Separators (Micronic and Coalescer)?</label>
+                        <input type="text" id="filterType" name="filterType" placeholder="Enter type" />
+                    </div>
+
+                    <div class="question">
+                        <label for="separatorType">
+                            11a) Filters and Filter Separators (Micronic and Coalescer):
+                            Type?
+                        </label>
+                        <input type="text" id="separatorType" name="separatorType" placeholder="Enter type" />
+                    </div>
+
+                    <div class="question">
+                        <label for="separatorCapacity">
+                            11b) Filters and Filter Separators (Micronic and Coalescer)?:
+                            Capacity?
+                        </label>
+                        <input type="text" id="separatorCapacity" name="separatorCapacity"
+                               placeholder="Enter capacity" />
+                    </div>
+
+                    <div class="question">
+                        <label for="strainerType">12a) Strainer/Basket Strainers: Type?</label>
+                        <input type="text" id="strainerType" name="strainerType" placeholder="Enter type" />
+                    </div>
+
+                    <div class="question">
+                        <label for="meshSize">12b) Strainer/Basket Strainers: Mesh?</label>
+                        <input type="text" id="meshSize" name="meshSize" placeholder="Enter size" />
+                    </div>
+
+                    <div class="question">
+                        <label for="segregationCapability">
+                            13a) Strainer/Basket Strainers: Segregation
+                            Capability?
+                        </label>
+                        <input type="text" id="segregationCapability" name="segregationCapability"
+                               placeholder="Enter YES/NO" />
+                    </div>
+
+                    <div class="question">
+                        <label for="recirculationCapability">
+                            13b) Strainer/Basket Strainers: Re-circulation
+                            Capability?
+                        </label>
+                        <input type="text" id="recirculationCapability" name="recirculationCapability"
+                               placeholder="Enter YES/NO" />
+                    </div>
+
+                    <div class="question">
+                        <label for="qarDawiaCertified">1) QARs DAWIA certified?</label>
+                        <select id="qarDawiaCertified" name="qarDawiaCertified">
+                            <option value="">SELECT</option>
+
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <div class="question">
+                        <label for="qarCommodityCertified">2) QARs commodity certified?</label>
+                        <select id="qarCommodityCertified" name="qarCommodityCertified">
+                            <option value="">SELECT</option>
+
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <div class="question">
+                        <label for="qarTrainingFollowed">3) QARs training program being followed?</label>
+                        <select id="qarTrainingFollowed" name="qarTrainingFollowed">
+                            <option value="">SELECT</option>
+
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <div class="question">
+                        <label for="qarIdpUpdated">4) IDP up to date for each QAR/supervisor?</label>
+                        <select id="qarIdpUpdated" name="qarIdpUpdated">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <div class="question">
+                        <label for="qarTrainingScheduled">5) Training scheduled?</label>
+                        <select id="qarTrainingScheduled" name="qarTrainingScheduled">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <div class="question">
+                        <label for="qarTrainingAccomplished">6) Training accomplished to plan?</label>
+                        <select id="qarTrainingAccomplished" name="qarTrainingAccomplished">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <div class="question">
+                        <label for="qualityBudgetPlan">7) Quality budget plan includes mission and training?</label>
+                        <select id="qualityBudgetPlan" name="qualityBudgetPlan">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <div class="question">
+                        <label for="qarSafetyHealth">8) Safety & Health Items.</label>
+                        <select id="qarSafetyHealth" name="qarSafetyHealth">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <div class="question">
+                        <label for="qarPhysicals">8.1) QAR physicals accomplished?</label>
+                        <select id="qarPhysicals" name="qarPhysicals">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <div class="question">
+                        <label for="ppeUsed">
+                            8.2) Personal protective equipment on hand and being
+                            used?
+                        </label>
+                        <select id="ppeUsed" name="ppeUsed">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <div class="question">
+                        <label for="safetyDataSheets">9) Safety Data Sheets posted and up to date?</label>
+                        <select id="safetyDataSheets" name="safetyDataSheets">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+
+                    <div class="question">
+                        <label for="isaUpToDate">10) ISA up to date for current PD?</label>
+                        <select id="isaUpToDate" name="isaUpToDate">
+                            <option value="">SELECT</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button type="button" class="button secondary" onclick="prevStep()">
+                        Previous
+                    </button>
+
+                    <button type="button" class="button" onclick="saveProgress()">Save Progress</button>
+                    <button type="submit"  name="submit_form" class="button" >
+                        Submit
+                    </button>        
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+   <script>
+    function saveProgress() {
+        const formElement = document.getElementById("dfspForm");
+        const formData = new FormData(formElement);
+        fetch("{% url 'save_progress' %}", {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value
+            },
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert(data.message);
+            if(data.status === "success" && data.file_path) {
+                document.getElementById("saved_file_path").value = data.file_path;
+                console.log("Hidden saved_file_path updated to:", data.file_path);
+            } else {
+                console.log("No file_path received from server.");
+            } 
+        })
+        .catch(error => console.error("Error saving progress:", error));
+    }
+
+    function loadSavedForm(filePath) {
+        let normalizedPath = filePath.replace(/\\/g, '/');
+        if (!normalizedPath.includes('saved_forms/')) {
+          normalizedPath = normalizedPath.replace('saved_forms', 'saved_forms/');
+        }
+        console.log("Loading saved form data from:", normalizedPath);
+      
+        fetch("{% url 'load_saved_form' %}?file_path=" + encodeURIComponent(normalizedPath))
+          .then(response => response.json())
+          .then(data => {
+            if (data.status === "success") {
+              Object.keys(data.form_data).forEach(function(key) {
+                let field = document.querySelector(`[name="${key}"]`);
+                if (field) {
+                  field.value = data.form_data[key];
+                }
+              });
+            } else {
+              console.error("Error loading saved form:", data.message);
+            }
+          })
+          .catch(error => console.error("Error fetching saved form:", error));
+      }
+      
+  
+    document.addEventListener("DOMContentLoaded", function() {
+        var savedPath = "{{ saved_file_path|default:'' }}";
+        if (savedPath) {
+            loadSavedForm(savedPath);
+        }
+    });
+
+        
+    document.addEventListener("DOMContentLoaded", () => {
+        document.querySelectorAll(".save-finding").forEach(button => {
+
+            button.addEventListener("click", function () {
+                const fieldName = this.dataset.field;
+                const textarea = document.querySelector(`textarea[name="${fieldName}"]`);
+                if (!textarea) {
+                    console.error(`Textarea for field "${fieldName}" not found.`);
+                    return;
+                }
+                const findingText = textarea.value;
+                const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    
+                fetch("{% url 'store_data' %}", {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": csrfToken,
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    },
+                    body: new URLSearchParams({
+                        "field_name": fieldName,
+                        "finding_text": findingText
+                    })
+                })
+                .then(response => {
+                    return response.json();
+                })
+                .then(data => {
+                    alert(data.message);
+                })
+                .catch(error => console.error("Error saving data:", error));
+            });
+        });
+    });
+
+        function toggleTextarea(type, sectionNumber) {
+            const remarksSection = document.getElementById(`remarks-section-${sectionNumber}`);
+            const previousSection = document.getElementById(`previous-section-${sectionNumber}`);
+
+            if (type === 'remarks') {
+                remarksSection.classList.add('active');
+                previousSection.classList.remove('active');
+            } else {
+                previousSection.classList.add('active');
+                remarksSection.classList.remove('active');
+            }
+        }
+        
+        function toggleTextarea(type, sectionNumber) {
+            const remarksSection = document.getElementById(`remarks-section-${sectionNumber}`);
+            const previousSection = document.getElementById(`previous-section-${sectionNumber}`);
+            const submitBtn = document.getElementById(`submitBtn${sectionNumber}`);
+            const InventoryBtn = document.getElementById(`InventoryBtn${sectionNumber}`);
+
+            const QualityBtn = document.getElementById(`QualityBtn${sectionNumber}`);
+            const SRMBtn = document.getElementById(`SRMBtn${sectionNumber}`);
+            const RMBtn = document.getElementById(`RMBtn${sectionNumber}`);
+            const BPSBtn = document.getElementById(`BPSBtn${sectionNumber}`);
+            if (type === 'remarks') {
+                remarksSection.classList.add('active');
+                previousSection.classList.remove('active');
+            } else {
+                previousSection.classList.add('active');
+                remarksSection.classList.remove('active');
+            }
+
+            submitBtn.style.display = 'inline-block';
+            InventoryBtn.style.display = 'inline-block';
+            QualityBtn.style.display = 'inline-block';
+            SRMBtn.style.display = 'inline-block';
+            RMBtn.style.display = 'inline-block';
+            BPSBtn.style.display = 'inline-block';
+        }
+
+        function moveToNextField(event, nextFieldId) {
+            if (event.keyCode === 13) {
+                event.preventDefault();
+                if (nextFieldId) {
+                    document.getElementById(nextFieldId).focus();
+                }
+            }
+        }
+
+        function confirmSubmit(event) {
+            event.preventDefault();
+            let selectedCategories = [];
+
+            let category1 = document.querySelectorAll('input[name="category1[]"]:checked');
+            let category2 = document.querySelectorAll('input[name="category2[]"]:checked');
+            let category3 = document.querySelectorAll('input[name="category3[]"]:checked');
+            let category4 = document.querySelectorAll('input[name="category4[]"]:checked');
+            let category5 = document.querySelectorAll('input[name="category5[]"]:checked');
+            let category6 = document.querySelectorAll('input[name="category6[]"]:checked');
+            let category7 = document.querySelectorAll('input[name="category7[]"]:checked');
+        
+            function getSelectedValues(category) {
+                return Array.from(category).map(input => input.value).join(', ');
+            }
+        
+            if (category1.length > 0) selectedCategories.push('Category 1: ' + getSelectedValues(category1));
+            if (category2.length > 0) selectedCategories.push('Category 2: ' + getSelectedValues(category2));
+            if (category3.length > 0) selectedCategories.push('Category 3: ' + getSelectedValues(category3));
+            if (category4.length > 0) selectedCategories.push('Category 4: ' + getSelectedValues(category4));
+            if (category5.length > 0) selectedCategories.push('Category 5: ' + getSelectedValues(category5));
+            if (category6.length > 0) selectedCategories.push('Category 6: ' + getSelectedValues(category6));
+            if (category7.length > 0) selectedCategories.push('Category 7: ' + getSelectedValues(category7));
+        
+            let summaryMessage = '<div style="text-align: left; line-height: 1.6;">' +
+                '<p><strong>Summary of Selected Categories:</strong></p>' +
+                '<ul style="list-style-type: none; padding-left: 0; margin: 0;">' +
+                selectedCategories.map(item => `<li>${item}</li>`).join('') +
+                '</ul>' +
+                '</div>';
+            Swal.fire({
+                title: 'Confirm Submission',
+                html: summaryMessage.replace(/\n/g, '<br>'),
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, submit!',
+                cancelButtonText: 'Cancel',
+                reverseButtons: true 
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'Form submitted successfully!',
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        event.target.submit();
+                    });
+                    return true;
+                } else {
+                    return false;
+                }
+            });
+        }
+        
+        const dfspData = [
+            {
+                dfspType: "COCO",
+                dfspName: "DFSP XXXXX",
+                dodaac: "XN3MWP",
+                militaryService: "DLA Energy",
+                dfspFunction: "Distribution",
+                state: "XXXX",
+                country: "United States",
+                regionalAffiliation: "Americas East",
+                energyContract: "DLA Energy",
+                fundingQualifier: "XXXX",
+                dfspStatus: "Active",
+                dsoHostTenant: "No",
+                dsoMOAPBA: "N/A",
+                dsoISSA: "No",
+                fsdHostTenant: "N/A",
+                fsdMOA: "N/A",
+                fsdISSA: "N/A",
+                fsdPermitted: "Null",
+                manpowerMilitary: "No",
+                manpowerFederalEmployees: "No",
+                manpowerHostNation: "No",
+                manpowerContractSupport: "Yes",
+                equipment: "Both E & S",
+                training: "N/A",
+                compliance: "N/A",
+                restoration: "Contractor",
+                operatorLevel: "Contractor",
+                systemsLevel: "Null",
+                labs: "Null",
+                areaLab: "Yes,FMD",
+                systemsDLAOwned: "No",
+                systemsServiceOwned: "Contractor",
+                maintenanceRequirements: "Null",
+                realProperty: "Null",
+                inventory: "Null",
+                qualitySurveillance: "Null",
+                fuelSpills: "Null",
+                safetyConcerns: "Null",
+                filePlans: "No",
+                documentDigitization: "No",
+                fenSiteReports: "No",
+                qualitySiteReports: "No",
+                fsdSiteReports: "No",
+                auditSiteReports: "No",
+                bpsdSiteReports: "No",
+                dlaJ6SiteReports: "No",
+                dcoSiteReports: "No",
+                regionalSiteReports: "No",
+                energyPOCMatrix: "No",
+                dfspPOCMatrix: "No",
+            },
+            {
+                dfspType: "GOCO",
+                dfspName: "Charleston AFB",
+                dodaac: "XR7EVB",
+                militaryService: "DLA Energy",
+                dfspFunction: "Storage",
+                state: "South Carolina",
+                country: "United States",
+                regionalAffiliation: "Americas East",
+                energyContract: "DLA Energy",
+                fundingQualifier: "DFDC GOCO",
+                dfspStatus: "Active",
+                dsoHostTenant: "No",
+                dsoMOAPBA: "N/A",
+                dsoISSA: "Yes",
+                fsdHostTenant: "No",
+                fsdMOA: "No",
+                fsdISSA: "Yes",
+                fsdPermitted: "Null",
+                manpowerMilitary: "No",
+                manpowerFederalEmployees: "Yes",
+                manpowerHostNation: "No",
+                manpowerContractSupport: "Yes",
+                equipment: "Energy",
+                training: "Energy",
+                compliance: "Energy",
+                restoration: "Energy",
+                operatorLevel: "Energy",
+                systemsLevel: "Energy",
+                labs: "Yes",
+                areaLab: "No",
+                systemsDLAOwned: "Yes,EPOS/FMD",
+                systemsServiceOwned: "No",
+                maintenanceRequirements: "Service",
+                realProperty: "Service",
+                inventory: "Null",
+                qualitySurveillance: "Both E & S",
+                fuelSpills: "No",
+                safetyConcerns: "N/A",
+                filePlans: "Null",
+                documentDigitization: "Null",
+                fenSiteReports: "No",
+                qualitySiteReports: "No",
+                fsdSiteReports: "No",
+                auditSiteReports: "No",
+                bpsdSiteReports: "No",
+                dlaJ6SiteReports: "No",
+                dcoSiteReports: "No",
+                regionalSiteReports: "No",
+                energyPOCMatrix: "No",
+                dfspPOCMatrix: "No",
+            },
+            {
+                dfspType: "GOGO",
+                dfspName: "DFSP Okinawa",
+                dodaac: "XS5XTA",
+                militaryService: "DLA Energy",
+                dfspFunction: "Fuel Distribution",
+                state: "OCONUS",
+                country: "Japan",
+                regionalAffiliation: "Okinawa",
+                energyContract: "Null",
+                fundingQualifier: "DFDO GOGO",
+                dfspStatus: "Active",
+                dsoHostTenant: "N/A",
+                dsoMOAPBA: "No",
+                dsoISSA: "N/A",
+                fsdHostTenant: "Yes",
+                fsdMOA: "N/A",
+                fsdISSA: "Yes",
+                fsdPermitted: "Yes",
+                manpowerMilitary: "Null",
+                manpowerFederalEmployees: "Null",
+                manpowerHostNation: "Null",
+                manpowerContractSupport: "Null",
+                equipment: "Energy",
+                training: "Energy",
+                compliance: "Energy",
+                restoration: "Energy",
+                operatorLevel: "No",
+                systemsLevel: "Null",
+                labs: "Yes,FMD",
+                areaLab: "Null",
+                systemsDLAOwned: "Energy",
+                systemsServiceOwned: "Service",
+                maintenanceRequirements: "Energy,with oversight",
+                realProperty: "Energy",
+                inventory: "8",
+                qualitySurveillance: "Null",
+                fuelSpills: "Null",
+                safetyConcerns: "Null",
+                filePlans: "No",
+                documentDigitization: "No",
+                fenSiteReports: "No",
+                qualitySiteReports: "No",
+                fsdSiteReports: "No",
+                auditSiteReports: "No",
+                bpsdSiteReports: "No",
+                dlaJ6SiteReports: "No",
+                dcoSiteReports: "No",
+                regionalSiteReports: "No",
+                energyPOCMatrix: "No",
+                dfspPOCMatrix: "No",
+            },
+        ];
+
+    
+        function populateFields(field) {
+            const input = document.getElementById(field).value;
+            const matchedData = dfspData.find(
+                (row) =>
+                    row.dfspType === input ||
+                    row.dfspName === input ||
+                    row.dodaac === input
+            );
+
+            if (matchedData) {
+                Object.keys(matchedData).forEach((key) => {
+                    const fieldElement = document.getElementById(key);
+                    if (fieldElement) {
+                        fieldElement.value = matchedData[key] || "";
+                    }
+                });
+            }
+        }
+
+        function showError(fieldId, message) {
+            const errorElement = document.getElementById(`${fieldId}-error`);
+            if (errorElement) {
+                errorElement.textContent = message;
+                errorElement.style.visibility = 'visible';
+            }
+        }
+        
+        function hideError(fieldId) {
+            const errorElement = document.getElementById(`${fieldId}-error`);
+            if (errorElement) {
+                errorElement.textContent = '';
+                errorElement.style.visibility = 'hidden';
+            }
+        }
+
+        function validateStep1() {
+            const dfspType = document.getElementById("dfspType").value;
+            const dfspName = document.getElementById("dfspName").value;
+            const dodaac = document.getElementById("dodaac").value;
+        
+            let isValid = true;
+            let firstErrorField = null;
+        
+            hideError("dfspType");
+            hideError("dfspName");
+            hideError("dodaac");
+        
+            if (!dfspType) {
+                showError("dfspType", "Please select a DFSP Type.");
+                isValid = false;
+                if (!firstErrorField) firstErrorField = document.getElementById("dfspType");
+            }
+            if (!dfspName) {
+                showError("dfspName", "Please fill in DFSP Name.");
+                isValid = false;
+                if (!firstErrorField) firstErrorField = document.getElementById("dfspName");
+            }
+            if (!dodaac) {
+                showError("dodaac", "Please fill in DODAAC.");
+                isValid = false;
+                if (!firstErrorField) firstErrorField = document.getElementById("dodaac");
+            }
+        
+            if (!isValid && firstErrorField) {
+                firstErrorField.scrollIntoView({ behavior: "smooth", block: "center" });
+                firstErrorField.focus(); // Optional: Focus the field for immediate correction
+            }
+        
+            return isValid;
+        }
+
+        function showSpecificQuestions() {
+            console.log("Dropdown value changed. Running showSpecificQuestions().");
+            const formType = document.getElementById("formType").value;
+
+            document
+                .getElementById("form2054")
+                .classList.toggle("hidden", formType !== "2054");
+
+            document
+                .getElementById("formQSMV")
+                .classList.toggle("hidden", formType !== "QSMV");
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const formTypeField = document.getElementById("formType");
+
+            if (formTypeField && formTypeField.value) {
+                showSpecificQuestions();
+            }
+        });
+
+        function nextStep() {
+            if (validateStep1()) {
+                document.getElementById("step1").classList.remove("active");
+                document.getElementById("step2").classList.add("active");
+                document.querySelectorAll(".step")[1].classList.add("active");
+            }
+            const formTypeField = document.getElementById("formType");
+            if (formTypeField && formTypeField.value) {
+                showSpecificQuestions();
+                window.scrollTo({
+                    top: 0,
+                    behavior: "smooth"
+                });
+            }
+        }
+
+        function prevStep() {
+            document.getElementById("step2").classList.remove("active");
+            document.getElementById("step1").classList.add("active");
+            document.querySelectorAll(".step")[1].classList.remove("active");
+        }
+        
+        document.getElementById("dfspType").addEventListener("input", function() {
+            hideError("dfspType");
+        });
+        
+        document.getElementById("dfspName").addEventListener("input", function() {
+            hideError("dfspName");
+        });
+        
+        document.getElementById("dodaac").addEventListener("input", function() {
+            hideError("dodaac");
+        });
+    </script>
+{% endblock %}

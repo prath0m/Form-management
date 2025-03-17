@@ -1,0 +1,17 @@
+<p>Hello {{ username }},</p>
+
+<p>Your uploaded file has been {{ status }}</p>
+
+<p><strong>File Details:</strong></p>
+<ul>
+    <li><strong>File Name:</strong> {{ file_name }}</li>
+    <li><strong>Uploaded At:</strong> {{ uploaded_at }}</li>
+    <li><strong>New Status:</strong> {{ status }}</li>
+    {% if remark %}
+    <p><strong>Remark:</strong> {{ remark }}</p>
+    {% endif %}
+</ul>
+
+<p>Thank you for using our service.</p>
+
+<p>Best regards,<br>Your Application Team</p>

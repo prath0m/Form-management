@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container my-5">
+    <h1 class="text-center mb-4">Visit Details</h1>
+    
+    <!-- Filters -->
+    <div class="row d-flex flex-row mb-3 g-3 align-items-end">
+        <div class="col">
+            <label for="siteFilter" class="form-label">Site</label>
+            <select class="form-select" id="siteFilter">
+                <option value="" {% if not current_location %}selected{% endif %}>All Sites</option>
+                <option value="charleston" {% if current_location == 'charleston' %}selected{% endif %}>Charleston</option>
+                <option value="okinawa" {% if current_location == 'okinawa' %}selected{% endif %}>Okinawa</option>
+            </select>
+        </div>
+        <div class="col">
+            <label for="filterVisitId" class="form-label">Visit ID</label>
+            <input type="text" class="form-control" id="filterVisitId" placeholder="Enter Visit ID">
+        </div>
+        <div class="col">
+            <label for="filterLocation" class="form-label">Location</label>
+            <input type="text" class="form-control" id="filterLocation" placeholder="Enter Location">
+        </div>
+        <div class="col">
+            <label for="filterStartDate" class="form-label">Start Date</label>
+            <input type="date" class="form-control" id="filterStartDate">
+        </div>
+        <div class="col">
+            <label for="filterEndDate" class="form-label">End Date</label>
+            <input type="date" class="form-control" id="filterEndDate">
+        </div>
+        <div class="col">
+            <label for="filterAnswer" class="form-label">Answer</label>
+            <input type="text" class="form-control" id="filterAnswer" placeholder="Enter Answer">
+        </div>
+        <div class="col d-grid">
+            <button class="btn btn-secondary" id="applyFilters">Apply Filters</button>
+        </div>
+    </div>
+    
+    <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
+        <table class="table table-hover table-striped align-middle" style="border-collapse: separate; border-spacing: 0; background: transparent;">
+            <thead class="table-secondary" style="position: sticky; top: 0; z-index: 1;">
+                <tr>
+                    <th>Visit ID</th>
+                    <th>Location</th>
+                    <th>Visit Start</th>
+                    <th>Visit End</th>
+                    <th>Areas of Interest</th>
+                    <th>Follow-Up Items</th>
+                    <th>Remarks</th>
+                    <th>Section</th>
+                    <th>Question</th>
+                    <th>Answer</th>
+                    <th>Details</th>
+                </tr>
+            </thead>
+            <tbody id="visitTableBody">
+                {% for visit_data in all_visit_data %}
+                <tr>
+                    <td>{{ visit_data.visit_id }}</td>
+                    <td>{{ visit_data.location }}</td>
+                    <td>{{ visit_data.visit_start_date }}</td>
+                    <td>{{ visit_data.visit_end_date }}</td>
+                    <td>{{ visit_data.areas_of_interest|truncatechars:20 }}</td>
+                    <td>{{ visit_data.follow_up_items|truncatechars:20 }}</td>
+                    <td>{{ visit_data.remarks|truncatechars:20 }}</td>
+                    <td>{{ visit_data.section_name }}</td>
+                    <td>{{ visit_data.question_description|truncatechars:20 }}</td>
+                    <td>{{ visit_data.answer|truncatechars:20 }}</td>
+                    <td>
+                        <button class="btn btn-sm btn-secondary" data-bs-toggle="modal" data-bs-target="#detailsModal-{{ visit_data.visit_id }}" style="white-space: nowrap;">
+                            Show More
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% for visit_data in all_visit_data %}
+<div class="modal fade" id="detailsModal-{{ visit_data.visit_id }}" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Visit Details - ID: {{ visit_data.visit_id }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table table-bordered">
+                    <tbody>
+                        <tr><td>Location</td><td>{{ visit_data.location }}</td></tr>
+                        <tr><td>Visit Start Date</td><td>{{ visit_data.visit_start_date }}</td></tr>
+                        <tr><td>Visit End Date</td><td>{{ visit_data.visit_end_date }}</td></tr>
+                        <tr><td>Areas of Interest</td><td>{{ visit_data.areas_of_interest }}</td></tr>
+                        <tr><td>Follow-Up Items</td><td>{{ visit_data.follow_up_items }}</td></tr>
+                        <tr><td>Remarks</td><td>{{ visit_data.remarks }}</td></tr>
+                        <tr><td>Section</td><td>{{ visit_data.section_name }}</td></tr>
+                        <tr><td>Question</td><td>{{ visit_data.question_description }}</td></tr>
+                        <tr><td>Answer</td><td>{{ visit_data.answer }}</td></tr>
+                        <tr><td>Trip Report Completed Date</td><td>{{ visit_data.trip_report_completed_date }}</td></tr>
+                        <tr><td>Created Date</td><td>{{ visit_data.created_at }}</td></tr>
+                        <tr><td>Tank Number</td><td>{{ visit_data.tank_number }}</td></tr>
+                        <tr><td>Tank Attribute</td><td>{{ visit_data.tank_attribute }}</td></tr>
+                        <tr><td>Tank Value</td><td>{{ visit_data.tank_value }}</td></tr>
+                        <tr><td>Piping Distance</td><td>{{ visit_data.piping_distance }}</td></tr>
+                        <tr><td>Piping Bends</td><td>{{ visit_data.piping_bends }}</td></tr>
+                        <tr><td>Subsection</td><td>{{ visit_data.subsection }}</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const siteSelect = document.getElementById('siteFilter');
+    
+    // Handle site dropdown changes
+    siteSelect.addEventListener('change', function() {
+        const location = this.value;
+        window.location.href = location ? 
+            `/okinawa-data/${location}/` : 
+            '/okinawa-data/';
+    });
+
+    // Apply all filters
+    document.getElementById('applyFilters').addEventListener('click', function () {
+        const selectedSite = siteSelect.value;
+        let visitIdFilter = document.getElementById('filterVisitId').value.toLowerCase();
+        let locationFilter = document.getElementById('filterLocation').value.toLowerCase();
+        let startDateFilter = document.getElementById('filterStartDate').value;
+        let endDateFilter = document.getElementById('filterEndDate').value;
+        let answerFilter = document.getElementById('filterAnswer').value.toLowerCase();
+
+        document.querySelectorAll('#visitTableBody tr').forEach(row => {
+            let location = row.cells[1].innerText.toLowerCase();
+            
+            // Check site filter first
+            if (selectedSite && !location.includes(selectedSite)) {
+                row.style.display = 'none';
+                return;
+            }
+
+            // Apply other filters
+            let matches =
+                (!visitIdFilter || row.cells[0].innerText.toLowerCase().includes(visitIdFilter)) &&
+                (!locationFilter || location.includes(locationFilter)) &&
+                (!startDateFilter || new Date(row.cells[2].innerText) >= new Date(startDateFilter)) &&
+                (!endDateFilter || new Date(row.cells[3].innerText) <= new Date(endDateFilter)) &&
+                (!answerFilter || row.cells[9].innerText.toLowerCase().includes(answerFilter));
+
+            row.style.display = matches ? '' : 'none';
+        });
+    });
+});
+</script>
+{% endblock %}
