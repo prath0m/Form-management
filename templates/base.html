@@ -193,7 +193,7 @@
                     {% if user.is_authenticated %}
                         {% if user.role == 'admin' %}
                             <li class="nav-item">
-                                <a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a>
+                                <a class="nav-link" href="{% url 'dashboard' %}">Admin Panel</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="{% url 'digital_form' %}">Digital Form</a>
@@ -203,7 +203,7 @@
                             </li>
 			    
                             <li class="nav-item">
-                                <a class="nav-link" href="{% url 'parsed_user_forms' %}">Parsed Data</a>
+                                <a class="nav-link" href="{% url 'parsed_user_forms' %}">Upload data</a>
                             </li>
                         {% endif %}
                         {% if user.role == 'user' %}
@@ -220,10 +220,10 @@
                             </li>
                         {% endif %}
                         <li class="nav-item">
-                            <a class="nav-link" href="" >MOA</a>
+                            <a class="nav-link" href="{% url 'moa' %}" >MOA</a>
                         </li>
                         <li class="nav-item">
-				<a class="nav-link" href="{% url 'kpi' %}">KPI</a>
+				            <a class="nav-link" href="{% url 'kpi' %}">KPI</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'logout' %}" style="color: red;">Logout</a>

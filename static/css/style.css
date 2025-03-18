@@ -58,6 +58,9 @@ body {
     font-size: 0.875rem;
     padding: 1rem;
     white-space: nowrap;
+    white-space: normal !important;
+    word-wrap: break-word;
+
 }
 
 .table tbody td {

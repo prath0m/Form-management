@@ -1,7 +1,9 @@
 from django.urls import path
 from .views import (register, login_view, logout_view,
                      dashboard,manage_user_uploads, approval_pending,
-                     approve_form, reject_form, okinawa_table, update_remark, parsed_user_forms, form, store_data, load_saved_form, save_progress, saved_form,digital_form, get_submission,kpi)
+                     approve_form, reject_form, okinawa_table, update_remark, 
+                     parsed_user_forms, form, store_data, load_saved_form, save_progress, 
+                     saved_form,digital_form, get_submission,kpi, moa)
 
 urlpatterns = [
     path('register/', register, name='register'),
@@ -25,4 +27,5 @@ urlpatterns = [
     path('digital_form/', digital_form, name='digital_form'),
     path('get_submission/<int:submission_id>/', get_submission, name='get_submission'),
     path('kpi/',kpi, name='kpi'),
+    path('moa/',moa, name='moa')
 ]

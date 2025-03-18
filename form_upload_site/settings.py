@@ -130,16 +130,17 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 STATIC_URL = '/static/'
+STATICFILES_DIRS = [BASE_DIR / 'static']
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 STATIC_ROOT = '/var/log/static/'
 LOGIN_URL = '/login/'
 
 
-GS_PROJECT_ID = 'dfsp-prototype'
-GS_BUCKET_NAME = 'dfsp_testcase_01'
-#MEDIA_URL = f'https://storage.googleapis.com/{GS_BUCKET_NAME}/'
-DEFAULT_FILE_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
+# GS_PROJECT_ID = 'dfsp-prototype'
+# GS_BUCKET_NAME = 'dfsp_testcase_01'
+# #MEDIA_URL = f'https://storage.googleapis.com/{GS_BUCKET_NAME}/'
+# DEFAULT_FILE_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
 
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

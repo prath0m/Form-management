@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from .models import FormUpload,CustomUser,PreviousFinding,FormSubmission
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from google.cloud import bigquery
+# from google.cloud import bigquery
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 import json
@@ -19,35 +19,52 @@ from django.utils import timezone
 import os
 import glob
 def get_visit_data(visit_type):
-    client = bigquery.Client()
-    datasets = client.list_datasets()
-    dataset_names = [dataset.dataset_id for dataset in datasets ]
+    # client = bigquery.Client()
+    # datasets = client.list_datasets()
+    # dataset_names = [dataset.dataset_id for dataset in datasets ]
+    
+    combined_data = []
+    with open('./json/QSMV_Okinawa.json', 'r') as file:
+        okinawa_data = json.load(file)
+    with open('./json/QSMV_Charleston.json', 'r') as file:\
+        charleston_data = json.load(file)
+    
+    combined_data = charleston_data + okinawa_data
+    
     if visit_type == 'new_visit':
-        query_table = 'dfsp_quality_inspection'
+        query_table = 'combined_data'
     elif visit_type == 'okinawa':
-        query_table = 'qsmv_okinawa'
+        with open('./json/QSMV_Okinawa.json', 'r') as file:
+            query_table = json.load(file)
     elif visit_type == 'charleston':
-        query_table = 'qsmv_charleston'
+        with open('./json/QSMV_Charleston.json', 'r') as file:
+            query_table = json.load(file)
 
-    query = f"SELECT * FROM `dfsp-prototype.project_dataset.{query_table}` LIMIT 1000"
-    query_job = client.query(query)
-    results = query_job.result()
+    # query = f"SELECT * FROM `dfsp-prototype.project_dataset.{query_table}` LIMIT 1000"
+    # query_job = client.query(query)
+    results = query_table
     return results
 
 @login_required
 def parsed_user_forms(request):
+    # if request.user.role == 'admin':
+    #     data = get_visit_data('new_visit')
+    #     res = []
+    #     for row in data:
+    #         file_path = row.file_input_path
+    #         file_path = file_path.lstrip('Uploaded_image/').rstrip('.pdf')
+    #         if file_path.isdigit():
+    #             file_obj = FormUpload.objects.get(pk= file_path)
+    #             file_name = file_obj.file.name.lstrip('uploads/')
+    #             file_url = file_obj.file.url
+    #             res.append({'row':row, "file_name": file_name, "file_url":file_url})
+    #     return render(request, 'core/parsed_data.html', {"datasets":res})
+    # return redirect('manage_uploads')
     if request.user.role == 'admin':
-        data = get_visit_data('new_visit')
-        res = []
-        for row in data:
-            file_path = row.file_input_path
-            file_path = file_path.lstrip('Uploaded_image/').rstrip('.pdf')
-            if file_path.isdigit():
-                file_obj = FormUpload.objects.get(pk= file_path)
-                file_name = file_obj.file.name.lstrip('uploads/')
-                file_url = file_obj.file.url
-                res.append({'row':row, "file_name": file_name, "file_url":file_url})
-        return render(request, 'core/parsed_data.html', {"datasets":res})
+        data = []
+        with open('./json/parsed_data.json', 'r') as file:
+            data = json.load(file)
+        return render(request, 'core/parsed_data.html', {'datasets': data})
     return redirect('manage_uploads')
 
 def register(request):
@@ -136,22 +153,22 @@ def approve_form(request, form_id):
     file_instance.status = 'approved'
     file_instance.save()
      
-    from google.cloud import storage
+    # from google.cloud import storage
 
-    # Initialize a client for Google Cloud Storage
-    storage_client = storage.Client()
+    # # Initialize a client for Google Cloud Storage
+    # storage_client = storage.Client()
 
-    # Get the bucket where you want to store the file
-    bucket = storage_client.get_bucket('dfsp_testcase_01')
-    print('bucket created')
-    # Create a new blob (file) in the specified bucket
-    file_extension = file_instance.file.name.split('.')[-1]
-    blob = bucket.blob('Uploaded_image/'+str(file_instance.pk)+'.'+file_extension)
-    print('b')
+    # # Get the bucket where you want to store the file
+    # bucket = storage_client.get_bucket('dfsp_testcase_01')
+    # print('bucket created')
+    # # Create a new blob (file) in the specified bucket
+    # file_extension = file_instance.file.name.split('.')[-1]
+    # blob = bucket.blob('Uploaded_image/'+str(file_instance.pk)+'.'+file_extension)
+    # print('b')
 
-    file_path = file_instance.file.path
-    # Upload the file from local storage to GCS
-    blob.upload_from_filename(file_path)
+    # file_path = file_instance.file.path
+    # # Upload the file from local storage to GCS
+    # blob.upload_from_filename(file_path)
 
 
     subject = "Your File Has Been Approved"
@@ -514,13 +531,13 @@ def store_data(request):
             try:
                 # Create a BigQuery client. If your GOOGLE_APPLICATION_CREDENTIALS is set,
                 # it will use that credential.
-                client = bigquery.Client()
+                # client = bigquery.Client()
                 # Set your BigQuery table ID in the format: project.dataset.table
-                table_id = "form-upload-452914.form_upload_dataset.form_submission"  # Change to your table's ID
+                # table_id = "form-upload-452914.form_upload_dataset.form_submission"  # Change to your table's ID
 
                 # Prepare the row. Here we assume form_data keys match your BigQuery table schema.
-                rows_to_insert = [form_data]
-                errors = client.insert_rows_json(table_id, rows_to_insert)
+                # rows_to_insert = [form_data]
+                # errors = client.insert_rows_json(table_id, rows_to_insert)
                 if errors:
                     print("Encountered errors while inserting rows into BigQuery: {}".format(errors))
                 else:
@@ -544,3 +561,7 @@ def store_data(request):
 
 def kpi(request):
     return render(request, 'core/kpi.html')
+
+
+def moa(request):
+    return render(request, 'core/moa.html')

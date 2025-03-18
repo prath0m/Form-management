@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load static %} 
+{% block content %}
+
+<head>
+    <title>MOA</title>
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+
+<body>
+    <div class="container dashboard-container">
+        <h2 class="dashboard-title">Uploaded form</h2>
+        <div class="card border-0">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover align-middle">
+                        <thead class="table-light sticky-top">
+                            <tr class="text-center">
+                                <th style="min-width: 120px;">BFSP</th>
+                                <th style="min-width: 150px;">Effective Date</th>
+                                <th style="min-width: 150px;">Expiration Data</th>
+                                <th style="min-width: 120px;">Remarks</th> 
+                            </tr>
+                        </thead>
+                        <tbody id="form-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+{% endblock %}

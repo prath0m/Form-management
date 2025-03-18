@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "form-upload-452914",
+  "private_key_id": "68822190d9b71475e63ef302a87a71652f5b0a85",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQDL03IimAGpQMTx\nk1i3pdHQcVxUkP1uLHbalH9DKMc9jJdkRhEWRh51p6/rRnAE1NCDCLTchD3XwuXt\nDbw+qYu6W7l1BUtskTMwNp+L3lxJhncN9BoYJG1d4GEoZuCEOFvhfIfbXz7BIkhi\ntOxBx+lTMxkNMfhS9QWC577DT2yp7+eAMATy6l4F41lbo2b7YoREYTPvDK9NVrz7\nQkT7fkkyM899/telOwBc3p5PNDq47yPUD+NL+jKxPUI7Q32yclvC4hR/yWzn+HS2\n/NeTbAy3ql9kU027389/c6vqD7vih3MHxNkR0Wd8lBehURAFQWGbpavcSTBpAwej\nWhiH4prLAgMBAAECggEAY9sMQIxty+iSU7OXNCmFl/PhgwChWBdqhv1XN6TDr5Cw\nHo0BFAN4KrXjRoV0nblRCdD7IkmbLpgqIq+m+KABd2Q2gHD+mYqtJEKueUyPs+mv\na+OZ4Rf/iI1DrBJyjfQ6d0aWHFAWI3JTOiBe2n9A/OS8si039hRaBd7ZI0BHAR1J\nGas+gMNI9v4dxi7/KHu3CXkmoFZxOOn+3visRZkZqkj099dACnjpqJasVZp0vrcl\nGBdNtvMqRhouBwDWoHTH2cU0uSvDO4vLhKwtjilnjkLQqEjkux73oUXdA10GGW0/\n+NckbQKc2niBHVVAXS29VVMUHnpGJ41DQT9P9WNXuQKBgQD+JVvtkvVSlolqzNMd\nTQxyuPREsF8AxGCzBIs9vtQ/el6jW9IPlDJ+bfyFp1/J8/bYTw/mbdyW8q/ZFb66\nI5ZCdXKtXSdWMjNZo72y33u7fSuwxi+Xgv/retda+aP7bWAvrOdMzveWbYLbu2zv\nm5qBtpdAQD9j7S+TmFg2Ad7MXQKBgQDNUBwMoHB1S3ZwO95p8f2yJGJy5Y9UrjwW\nH5LwYhqiptITpBlHmCZZyItzXbYbbe0DpV5YhvGwfy9Euxl6Q8eQpqgIl6drbqna\nNVXJLJl/c944JB59OHx9MyvFLDRnt//Cj5WP/c80iJgXIl2wyFOSskVWUPdV36ox\nW58Ls0DRRwKBgGSJ1vIG/vGrB7WuTZ37yv7fWBKMSyj8htyK4aKNiV2LRUEOo+zx\nzX/idtFQwz4bOv2bWUjpESjN3O7eAVOVnG2yFKmsflFFDrdZZUQL0OD8xXnrDQy9\nEAzRzbv5oftm63QwzFfAUIW70NaoMJIhVmAWIYOTZwBa5kVXMR48Yy0pAoGAVczw\nq+YwmRQcPvMGE8hpeRTzf4inyX+25Jf1VDfrYaXNjR+64MyY2lSQ0nmLLRNXRXrK\nXrymLFg6bMKz9wB0WeMLveuCr8bjfKllXFkjHLxTVarigvokLD5CQHgkvmOKoshW\nfIJZIV8kECbweHx/UILnrxbPBjgea9oaMU2L/OkCgYB2oVdIz9zmfhsMy9Vev1Cz\nv6/TIxJBk0hT4Da68rtvducdu0ZoswaYBNXnVo5UsGGVfH7xKI/kLs8JSyxzOxxh\nhSyaf+lhwRaXy4dYkQOjtO7jt+jDtygaeEt4MaMwFMpUFVYRaDigqNFjGSBz5SGt\nL2I9xV/pW3doc1iyqpbTFA==\n-----END PRIVATE KEY-----\n",
+  "client_email": "django-bigquery-sa@form-upload-452914.iam.gserviceaccount.com",
+  "client_id": "105224740555162719590",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/django-bigquery-sa%40form-upload-452914.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
